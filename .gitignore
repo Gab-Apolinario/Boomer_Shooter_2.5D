@@ -1,0 +1,22 @@
+# Pastas geradas automaticamente pela Unity — podem ter gigabytes e são recriadas automaticamente
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Unity Version Control (Plastic SCM) — o Git não precisa rastrear isso
+.plastic/
+plastic.ignore
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.csproj
+*.sln
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
