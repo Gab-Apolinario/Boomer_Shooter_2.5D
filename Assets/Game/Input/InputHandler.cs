@@ -30,9 +30,19 @@ public class InputHandler
         get { return inputActions.Player.Sprint.ReadValue<float>() > 0.5f; }
     }
     
-    public bool IsAttacking
+    public bool IsShooting
     {
-        get { return inputActions.Player.Attack.ReadValue<float>() > 0.5f; }
+        get { return inputActions.Player.Shoot.ReadValue<float>() > 0.5f; }
+    }
+
+    public bool IsReloading
+    {
+        get { return inputActions.Player.Reload.ReadValue<float>() > 0.5f; }
+    }
+
+    public bool IsMeleeAttacking
+    {
+        get { return inputActions.Player.MeleeAtack.ReadValue<float>() > 0.5f; }
     }
 
     public bool IsDashing
