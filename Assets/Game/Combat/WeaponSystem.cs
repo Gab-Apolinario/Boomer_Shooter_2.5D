@@ -44,6 +44,7 @@ public class WeaponSystem : MonoBehaviour
             lineRenderer = GetComponent<LineRenderer>();
         }
 
+        lineRenderer.enabled = false;
         cooldownTimer = shotCooldown;
         chargerCapacity = 10;
         bulletsToShoot = chargerCapacity;
@@ -89,7 +90,6 @@ public class WeaponSystem : MonoBehaviour
         {
             //Aciona TakeDamage() do BaseEnemy
             enemy.TakeDamage(shotDamage);
-            Debug.Log("Tiro atingiu inimigo");
         }
 
         canShoot = false;

@@ -27,6 +27,8 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected float attackingRange;
     [SerializeField] protected float fieldOfView;
     [SerializeField] protected bool playerDetected;
+    protected bool collisionDetected;
+    protected RaycastHit hitInfo;
 
     #endregion
 
@@ -44,6 +46,10 @@ public class BaseEnemy : MonoBehaviour
         {
             navAgent = GetComponent<NavMeshAgent>();
         }
+
+        navAgent.stoppingDistance = attackingRange;
+
+        ChasingFromStart();
     }
 
     public virtual void Update()
@@ -59,16 +65,6 @@ public class BaseEnemy : MonoBehaviour
         {
             navAgent.SetDestination(player.position);
             navAgent.speed = sprintSpeed;
-        }
-        else if (currentState == EnemyState.Attacking)
-        {
-            //atacar
-            navAgent.ResetPath();
-        }
-        else
-        {
-            //parado e patrulhadno depois
-            navAgent.ResetPath();
         }
     }
 
@@ -100,20 +96,27 @@ public class BaseEnemy : MonoBehaviour
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, directionToPlayer);
 
-        bool collisionDetected = Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hitInfo, detectionRange);
+        collisionDetected = Physics.Raycast(transform.position, directionToPlayer, out hitInfo, detectionRange);
 
         if (collisionDetected && hitInfo.collider.CompareTag("Player"))
         {
             playerDetected = true;
         }
 
+        //Se o player estiver dentro do campo de visão e alcance de ataque, ataca
         if (playerDetected && angle <= fieldOfView / 2 && distance <= attackingRange)
         {
             currentState = EnemyState.Attacking;
+            navAgent.updateRotation = false;
+
+            //olha para o player, mas sem inclinar para cima ou para baixo
+            Vector3 lookTarget = new Vector3(player.position.x, transform.position.y, player.position.z);
+            transform.LookAt(lookTarget);
         }
-        else if (playerDetected && angle <= fieldOfView/2 && distance <= detectionRange)
+        else if (playerDetected)
         {
             currentState = EnemyState.Chasing;
+            navAgent.updateRotation = true;
         }
         else if (!playerDetected)
         {
@@ -124,6 +127,13 @@ public class BaseEnemy : MonoBehaviour
     public virtual void Die()
     {
         Destroy(gameObject);
+        Acoes.OnEnemyDie?.Invoke();
+    }
+
+    protected virtual void ChasingFromStart()
+    {
+        playerDetected = true;
+        currentState = EnemyState.Chasing;
     }
 
     private void OnDrawGizmos()
