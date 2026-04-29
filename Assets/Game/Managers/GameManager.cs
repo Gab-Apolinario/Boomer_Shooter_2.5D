@@ -1,0 +1,146 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
+public class GameManager : MonoBehaviour
+{
+    #region ID
+    private enum GameState
+    {
+        Playing,
+        GameOver,
+        Victory,
+        TimeOver
+    }
+
+    [SerializeField] private GameState currentState;
+    [SerializeField] private UIManager UIManager;
+    [SerializeField] private SceneLoader SceneLoader;
+    [SerializeField] private int score;
+    private int scorePerSeconds;
+    [SerializeField] private float timeLimit; //segundos
+    [SerializeField] private float timePlayed; //segundos
+    [SerializeField] private bool timerStarted;
+    [SerializeField] private bool isPaused;
+
+    #endregion
+
+    private void OnEnable()
+    {
+        Acoes.OnEnemyDie += IncreaseScore;
+        Acoes.OnPlayerDeath += HandleGameOver;
+        Acoes.OnLastWaveFinished += HandleVictory;
+        Acoes.OnWaveSpawn += StartTimer;
+    }
+
+    private void OnDisable()
+    {
+        Acoes.OnEnemyDie -= IncreaseScore;
+        Acoes.OnPlayerDeath -= HandleGameOver;
+        Acoes.OnLastWaveFinished -= HandleVictory;
+        Acoes.OnWaveSpawn -= StartTimer;
+    }
+
+    private void Awake()
+    {
+        if (UIManager == null)
+        {
+            UIManager = FindAnyObjectByType<UIManager>();
+        }
+
+        if (SceneLoader == null)
+        {
+            SceneLoader = FindAnyObjectByType<SceneLoader>();
+        }
+    }
+
+    private void Start()
+    {
+        currentState = GameState.Playing;
+        score = 0;
+        scorePerSeconds = 10;
+        timePlayed = 0;
+        timeLimit = 240f; //4 minutos
+    }
+
+    private void Update()
+    {
+        if (currentState == GameState.Playing && Keyboard.current.f1Key.wasPressedThisFrame)
+        {
+            SceneLoader.LoadMenu();
+        }
+
+        if (currentState == GameState.Playing && (Keyboard.current.pKey.wasPressedThisFrame || (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame)))
+        {
+            isPaused = !isPaused;
+            Time.timeScale = isPaused ? 0 : 1;
+        }
+
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            Application.Quit();
+        }
+
+        if (currentState == GameState.Playing && timerStarted)
+        {
+            timeLimit -= Time.deltaTime;
+            timePlayed += Time.deltaTime;
+            UIManager.UpdateTimer(timeLimit);
+        }
+        
+
+        if (currentState == GameState.Playing && timeLimit <= 0)
+        {
+            TimeOver();
+        }
+    }
+
+    void IncreaseScore(int amount)
+    {
+        if (currentState != GameState.Playing)
+        {
+            return;
+        }
+
+        score += amount;
+
+        Acoes.ResolveScore?.Invoke(score); //Atualizar UI
+    }
+
+    void HandleGameOver()
+    {
+        currentState = GameState.GameOver;
+        Time.timeScale = 0;
+
+        Acoes.ResolveTime?.Invoke(timePlayed);
+        Acoes.ResolveScore?.Invoke(score); //Atualizar UI
+        Acoes.GameOver?.Invoke(); //Entrar modal UI
+    }
+
+    void HandleVictory()
+    {
+        currentState = GameState.Victory;
+        Time.timeScale = 0;
+        int timeBonus = (int)timeLimit * scorePerSeconds;
+
+        score += timeBonus;
+        Acoes.ResolveTime?.Invoke(timePlayed);
+        Acoes.ResolveScore?.Invoke(score); //Atualizar UI
+        Acoes.Victory?.Invoke(); //Atualizar UI
+    }
+
+    void TimeOver()
+    {
+        currentState = GameState.TimeOver;
+        Time.timeScale = 0;
+
+        Acoes.ResolveTime?.Invoke(timePlayed);
+        Acoes.ResolveScore?.Invoke(score); //Atualizar UI
+        Acoes.TimeOver?.Invoke(); //Entra modal UI
+    }
+
+    void StartTimer(int _)
+    {
+        timerStarted = true;
+    }
+}

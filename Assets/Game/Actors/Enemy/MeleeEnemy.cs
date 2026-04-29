@@ -12,6 +12,8 @@ public class MeleeEnemy : BaseEnemy
         base.Start();
         attackCooldownTimer = attackCooldown;
         playerScript = player.GetComponent<Player>();
+
+        score = 10;
     }
 
     public override void Update()

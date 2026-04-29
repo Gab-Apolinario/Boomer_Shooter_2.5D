@@ -15,12 +15,13 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private float shotDamage;
     [SerializeField] private int bulletsToShoot;
     [SerializeField] private int chargerCapacity;
-    [SerializeField] private float reloadTime;
+    public static float ReloadTime { get; private set; }
+
     [SerializeField] private bool isReloading;
     private bool canShoot = true;
 
-    private int boltSize = 3;
-    private float boltSpeed = 80f;
+    private int boltSize = 4;
+    private float boltSpeed = 100f;
     private Vector3 boltPosition;
     private Vector3 boltDirection;
 
@@ -46,9 +47,9 @@ public class WeaponSystem : MonoBehaviour
 
         lineRenderer.enabled = false;
         cooldownTimer = shotCooldown;
-        chargerCapacity = 10;
+        chargerCapacity = 15;
         bulletsToShoot = chargerCapacity;
-        reloadTime = 1.5f;
+        ReloadTime = 1.2f;
     }
 
     private void Update()
@@ -80,6 +81,7 @@ public class WeaponSystem : MonoBehaviour
     {
         Debug.Log("Atirou!");
         bulletsToShoot--;
+        Acoes.OnAmmoChanged?.Invoke(bulletsToShoot, chargerCapacity);
 
         //retorna um bool
         bool shot = Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hitInfo, shotMaxRange);
@@ -139,12 +141,15 @@ public class WeaponSystem : MonoBehaviour
 
     IEnumerator Reload()
     {
+        Acoes.OnReloadChanged?.Invoke(true);
         Debug.Log("Recarregando Arma!");
         isReloading = true;
         canShoot = false;
-        yield return new WaitForSeconds(reloadTime);
+        yield return new WaitForSeconds(ReloadTime);
         bulletsToShoot = chargerCapacity;
         isReloading = false;
+        Acoes.OnReloadChanged?.Invoke(false);
+        Acoes.OnAmmoChanged?.Invoke(bulletsToShoot, chargerCapacity);
         canShoot = true;
     }
 

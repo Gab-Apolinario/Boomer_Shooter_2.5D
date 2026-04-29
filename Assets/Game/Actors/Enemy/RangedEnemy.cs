@@ -22,13 +22,15 @@ public class RangedEnemy : BaseEnemy
         }
         if (gunFront == null)
         {
-            gunFront = transform.Find("Gun/Gun_Front");
+            gunFront = transform.Find("GunHolder/Gun_Front");
         }
 
         playerScript = player.GetComponent<Player>();
 
         canShoot = true;
         cooldownTimer = shotCooldown;
+
+        score = 15;
 
         navAgent.stoppingDistance = attackingRange - 1f;
         lineRenderer.enabled = false;

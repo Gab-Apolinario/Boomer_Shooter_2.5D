@@ -21,6 +21,7 @@ public class BaseEnemy : MonoBehaviour
     //[SerializeField] protected float moveSpeed;
     [SerializeField] protected float sprintSpeed;
     [SerializeField] protected float damage;
+    [SerializeField] protected int score;
     [SerializeField] protected NavMeshAgent navAgent;
     [SerializeField] protected Transform player;
     [SerializeField] protected float detectionRange;
@@ -63,7 +64,8 @@ public class BaseEnemy : MonoBehaviour
     {
         if (currentState == EnemyState.Chasing)
         {
-            navAgent.SetDestination(player.position);
+            Vector3 destination = new Vector3(player.position.x, transform.position.y, player.position.z);
+            navAgent.SetDestination(destination);
             navAgent.speed = sprintSpeed;
         }
     }
@@ -127,7 +129,7 @@ public class BaseEnemy : MonoBehaviour
     public virtual void Die()
     {
         Destroy(gameObject);
-        Acoes.OnEnemyDie?.Invoke();
+        Acoes.OnEnemyDie?.Invoke(score);
     }
 
     protected virtual void ChasingFromStart()

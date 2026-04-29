@@ -13,6 +13,7 @@ public class WaveManager : MonoBehaviour
 
     [Header("Waves")]
     public List<WaveData> waves;
+    [SerializeField] private UIManager UIManager;
 
     [Header("Prefabs")]
     public GameObject meleeEnemyPrefab;
@@ -37,12 +38,21 @@ public class WaveManager : MonoBehaviour
         Acoes.OnEnemyDie -= HandleEnemyDie;
     }
 
-    private void Start()
+    private void Awake()
     {
-        StartCoroutine(StartWaveWithDelay(0f));
+        if (UIManager == null)
+        {
+            UIManager = FindAnyObjectByType<UIManager>();
+        }
     }
 
-    private void HandleEnemyDie()
+    private void Start()
+    {
+        StartCoroutine(StartWaveWithDelay(3f));
+        UIManager.UpdateWave(currentWaveIndex, waves.Count);
+    }
+
+    private void HandleEnemyDie(int _) //o int é o score do inimigo, usa '_' para indicar que não é usado
     {
         enemiesAlive--;
 
@@ -63,12 +73,21 @@ public class WaveManager : MonoBehaviour
             Acoes.OnAllEnemiesDead?.Invoke();
             currentWaveIndex++;
             StartCoroutine(StartWaveWithDelay(timeBetweenWaves));
+            UIManager.UpdateWave(currentWaveIndex, waves.Count);
         }
     }
 
     private IEnumerator StartWaveWithDelay(float delay)
     {
-        yield return new WaitForSeconds(delay);
+        int timeRemaining = (int)delay;
+
+        while (timeRemaining > 0)
+        {
+            Acoes.OnTimeBetweenWaves?.Invoke(timeRemaining);
+            yield return new WaitForSeconds(1f);
+            timeRemaining--;
+        }
+        
         SpawnWave(waves[currentWaveIndex]);
     }
 
@@ -90,6 +109,8 @@ public class WaveManager : MonoBehaviour
             SpawnEnemy(rangedEnemyPrefab, availablePoints[spawnIndex % availablePoints.Count]);
             spawnIndex++;
         }
+
+        Acoes.OnWaveSpawn?.Invoke(currentWaveIndex + 1);
     }
 
     private void SpawnEnemy(GameObject prefab, int pointIndex)
@@ -112,4 +133,17 @@ public class WaveManager : MonoBehaviour
 
         return indices;
     }
+
+    public void ForceNextWave()
+    {
+        StopAllCoroutines();
+        enemiesAlive = 0;
+        currentWaveIndex++;
+        if (currentWaveIndex >= waves.Count)
+        {
+            Acoes.OnLastWaveFinished?.Invoke();
+            return;
+        }
+        StartCoroutine(StartWaveWithDelay(0f));
+}
 }

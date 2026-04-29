@@ -4,10 +4,11 @@ public class PlayerController : MonoBehaviour
 {
     private InputHandler inputHandler;
     [SerializeField] private CharacterController characterController;
+    [SerializeField] private float mouseSensitivity = 10f;
+    [SerializeField] private float gamepadSensitivity = 150f;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float sprintSpeed = 10f;
     [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private float rotationSensitivity = 15f;
     [SerializeField] private float verticalVelocity = -2f; //'gravidade' do jogador
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private bool canDash = true;
@@ -15,7 +16,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashDeceleration = 5f;
     [SerializeField] private Vector3 dashVelocity;
 
-    
+    private void Awake()
+    {
+        //Inicializar o InputHandler
+        inputHandler = new InputHandler();
+    }
 
     private void Start()
     {
@@ -25,13 +30,11 @@ public class PlayerController : MonoBehaviour
             Debug.LogWarning("CharacterController não encontrado");
             characterController = GetComponent<CharacterController>();
         }
-
-        //Inicializar o InputHandler
-        inputHandler = new InputHandler();
     }
 
     private void Update()
     {
+        inputHandler.UpdateActiveDevice();
         Jump();
         Dash();
         Move();
@@ -71,9 +74,10 @@ public class PlayerController : MonoBehaviour
     }
 
     void Rotation()
-    {
-        transform.Rotate(0, inputHandler.LookInput.x * Time.deltaTime * rotationSensitivity, 0);
-    }
+{
+    float sensitivity = inputHandler.IsGamepad ? gamepadSensitivity : mouseSensitivity;
+    transform.Rotate(0, inputHandler.LookInput.x * Time.deltaTime * sensitivity, 0);
+}
 
     void Jump()
     {
