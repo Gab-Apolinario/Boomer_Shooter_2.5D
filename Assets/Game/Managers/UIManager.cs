@@ -18,6 +18,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject gameOverModal;
     [SerializeField] private GameObject victoryModal;
     [SerializeField] private GameObject timeOverModal;
+    [SerializeField] private GameObject pauseModal;
+    [SerializeField] private Slider mouseSensSlider;
+    [SerializeField] private Slider gamepadSensSlider;
     [SerializeField] private TextMeshProUGUI scoreText;
 
     [Header("Leaderboard")]
@@ -61,6 +64,7 @@ public class UIManager : MonoBehaviour
         gameOverModal.SetActive(false);
         victoryModal.SetActive(false);
         timeOverModal.SetActive(false);
+        pauseModal.SetActive(false);
         healthBar.fillAmount = 1f;
         reloadCircle.fillAmount = 0f;
         reloadCircle.gameObject.SetActive(false);
@@ -145,6 +149,32 @@ public class UIManager : MonoBehaviour
         reloadCircle.gameObject.SetActive(false);
         scoreText.gameObject.SetActive(false);
         waveAnnouncementText.gameObject.SetActive(false);
+    }
+
+    public void ShowPause()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        mouseSensSlider.value = SettingsManager.MouseSensibility;
+        gamepadSensSlider.value = SettingsManager.GamepadSensibility;
+        pauseModal.SetActive(true);
+    }
+
+    public void HidePause()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        pauseModal.SetActive(false);
+    }
+
+    public void OnMouseSliderChanged(float value)
+    {
+        SettingsManager.SetMouseSensibility(value);
+    }
+
+    public void OnGamepadSliderChanged(float value)
+    {
+        SettingsManager.SetGamepadSensibility(value);
     }
 
     private void ShowGameOver()

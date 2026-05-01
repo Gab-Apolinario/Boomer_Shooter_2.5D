@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class WeaponSystem : MonoBehaviour
 {
+    #region Variáveis
     InputHandler inputHandler;
-
 
     [SerializeField] private Transform gunFront;
     [SerializeField] private Camera mainCamera;
@@ -24,12 +24,14 @@ public class WeaponSystem : MonoBehaviour
     private float boltSpeed = 100f;
     private Vector3 boltPosition;
     private Vector3 boltDirection;
-
+    #endregion
 
     private void Start()
     {
+        //Inicializar o InputHandler
         inputHandler = new InputHandler();
 
+        #region Segurança para pegar referências se esquecer de arrastar no inspector
         if (gunFront == null)
         {
             gunFront = transform.Find("Gun_Front");
@@ -44,7 +46,9 @@ public class WeaponSystem : MonoBehaviour
         {
             lineRenderer = GetComponent<LineRenderer>();
         }
+        #endregion
 
+        //Iniciação de variáveis
         lineRenderer.enabled = false;
         cooldownTimer = shotCooldown;
         chargerCapacity = 15;
@@ -82,10 +86,10 @@ public class WeaponSystem : MonoBehaviour
         Debug.Log("Atirou!");
         bulletsToShoot--;
         Acoes.OnAmmoChanged?.Invoke(bulletsToShoot, chargerCapacity);
+        Acoes.PlayerAtirou?.Invoke(); //PARTICULA DE MUZZLE FLASH
 
         //retorna um bool
         bool shot = Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hitInfo, shotMaxRange);
-        Vector3 laserDestination; //local onde o raycast bate
 
         //Verifica se o objeto atingido é um inimigo e aplica dano
         if (shot && hitInfo.collider.TryGetComponent<BaseEnemy>(out BaseEnemy enemy))
@@ -99,44 +103,10 @@ public class WeaponSystem : MonoBehaviour
 
         if (shot) //se atingiu algo
         {
-            laserDestination = hitInfo.point;
+            //ACAO PARTICULA DE IMPACTO
+            Acoes.OnImpact?.Invoke(hitInfo.point);
             Debug.Log("Raycast bateu em: " + hitInfo.collider.name);
         }
-        else //laser vai pra frente até distância máxima
-        {
-            laserDestination = mainCamera.transform.position + mainCamera.transform.forward * shotMaxRange;
-        }
-
-        boltDirection = mainCamera.transform.forward;
-        StopAllCoroutines();
-        StartCoroutine(ShowLaser(laserDestination));
-    }
-
-    IEnumerator ShowLaser(Vector3 laserDestination)
-    {
-        //laser começa na ponta da arma
-        boltPosition = gunFront.position;
-
-        //define ponto inicial e 'final' do laser. Iguais no começo
-        lineRenderer.SetPosition(0, gunFront.position); //posição inicial
-        lineRenderer.SetPosition(1, boltPosition); //posição final
-
-        //ativa o lineRenderer
-        lineRenderer.enabled = true;
-        
-        //Enquanto o laser não chegar no hit do raycast
-        while(Vector3.Distance(boltPosition, laserDestination) > 0.1f)
-        {
-            //move o bolt para o destino
-            boltPosition = Vector3.MoveTowards(boltPosition, laserDestination, boltSpeed * Time.deltaTime);
-            yield return null; //espera um frame
-            //atualiza os pontos com a posição nova
-            lineRenderer.SetPosition(0, boltPosition); //traseira vira boltPosition atualizada
-            lineRenderer.SetPosition(1, boltPosition + boltDirection * boltSize); //frente vai boltSize unidades para frente
-        }
-
-        //Quando chega no destino (sai do While) desativa o lineRenderer
-        lineRenderer.enabled = false;
     }
 
     IEnumerator Reload()

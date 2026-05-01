@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Variáveis
     private InputHandler inputHandler;
     [SerializeField] private CharacterController characterController;
-    [SerializeField] private float mouseSensitivity = 10f;
-    [SerializeField] private float gamepadSensitivity = 150f;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float sprintSpeed = 10f;
     [SerializeField] private float jumpForce = 5f;
@@ -15,7 +14,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashCooldown = 2f;
     [SerializeField] private float dashDeceleration = 5f;
     [SerializeField] private Vector3 dashVelocity;
+    #endregion
 
+    //Awake() roda antes do Start(), bom para inniciar variáveis que outros scripts possam precisar no Start()
     private void Awake()
     {
         //Inicializar o InputHandler
@@ -24,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        //SEGURANÇA - Pegar o CharacterController do jogador
+        //SEGURANÇA - Pegar o CharacterController do jogador se no começo estiver vazio
         if (characterController == null)
         {
             Debug.LogWarning("CharacterController não encontrado");
@@ -74,25 +75,26 @@ public class PlayerController : MonoBehaviour
     }
 
     void Rotation()
-{
-    float sensitivity = inputHandler.IsGamepad ? gamepadSensitivity : mouseSensitivity;
-    transform.Rotate(0, inputHandler.LookInput.x * Time.deltaTime * sensitivity, 0);
-}
+    {
+        //Operador ternário. Se o input for o gamepad, usa a sensibilidade do gamepad, senão usa a sensibilidade do mouse
+        float sensitivity = inputHandler.IsGamepad ? SettingsManager.GamepadSensibility : SettingsManager.MouseSensibility;
+        transform.Rotate(0, inputHandler.LookInput.x * Time.deltaTime * sensitivity, 0);
+    }
 
     void Jump()
     {
+        //Se o jogador apertar o botão de pulo e estiver no chão, aplica a força de pulo
         if (inputHandler.JumpInput && characterController.isGrounded)
         {
             verticalVelocity = jumpForce;
-            Debug.Log("Pulou!");
         }
     }
 
     void Dash()
     {
+        //Se o jogador apertar o botão de dash e o dash não estiver no cooldown, aplica a velocidade do dash
         if (inputHandler.IsDashing && canDash)
         {
-            Debug.Log("Dash!");
             dashVelocity = transform.forward * dashSpeed; //calcula a velocidade do dash na direção que o jogador está olhando
             canDash = false; //desativa o dash até o cooldown terminar
             Invoke(nameof(ResetDash), dashCooldown); //chama ResetDash após o cooldown

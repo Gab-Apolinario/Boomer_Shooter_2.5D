@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -74,6 +73,15 @@ public class GameManager : MonoBehaviour
         {
             isPaused = !isPaused;
             Time.timeScale = isPaused ? 0 : 1;
+
+            if (isPaused)
+            {
+                UIManager.ShowPause();
+            }
+            else
+            {
+                UIManager.HidePause();
+            }
         }
 
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
@@ -142,5 +150,12 @@ public class GameManager : MonoBehaviour
     void StartTimer(int _)
     {
         timerStarted = true;
+    }
+
+    public void ResumeGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1;
+        UIManager.HidePause();
     }
 }
