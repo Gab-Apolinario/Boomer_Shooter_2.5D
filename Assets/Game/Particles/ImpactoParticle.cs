@@ -16,7 +16,7 @@ public class ImpactoParticle : MonoBehaviour
 
     void OnImpacto(Vector3 position)
     {
-        Instantiate(preFabImpacto, position, Quaternion.identity);
-        Destroy(preFabImpacto, 1f);
+        GameObject instance = Instantiate(preFabImpacto, position, Quaternion.identity);
+        Destroy(instance, 1f);
     }
 }

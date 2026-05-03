@@ -96,6 +96,7 @@ public class PlayerController : MonoBehaviour
         //Se o jogador apertar o botão de dash e o dash não estiver no cooldown, aplica a velocidade do dash
         if (inputHandler.IsDashing && canDash)
         {
+            Acoes.OnDash?.Invoke(); //AÇÃO DE DASH
             //se o jogador não estiver se movendo, dasha para a frente do jogador
             if (horizontalDirection == Vector3.zero)
             {

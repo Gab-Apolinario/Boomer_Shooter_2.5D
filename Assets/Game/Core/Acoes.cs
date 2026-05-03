@@ -14,12 +14,14 @@ public static class Acoes
     public static Action TimeOver;
     public static Action<float> ResolveTime;
     public static Action<int> ResolveScore;
-    public static Action<int, int> OnAmmoChanged; //bulletsToShoot, chargerCapacity
+    public static Action<float, float> OnHeatChanged; //currentHeat, maxHeat
     public static Action<bool> OnReloadChanged;   //isReloading true/false
+    public static Action OnOverheat; //arma superaquecida
     public static Action<float, float> OnPlayerHealthChanged; //health, maxHealth
 
 
     //PARTICULAS
     public static Action PlayerAtirou; //MUZZLE FLASH
     public static Action<Vector3> OnImpact; //IMPACTO
+    public static Action OnDash; //DASH
 }

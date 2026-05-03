@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3065742175820703605}
   - component: {fileID: 4683800959362722671}
   - component: {fileID: 7686612196456105342}
+  - component: {fileID: 5659422907020118364}
   m_Layer: 0
   m_Name: DashFrente
   m_TagString: Untagged
@@ -4836,3 +4837,16 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
+--- !u!114 &5659422907020118364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7707686126536235278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8559ba795d4721b488b4debf1aa49aaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DashParticle
+  dashParticle: {fileID: 4683800959362722671}

@@ -5,13 +5,14 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
+    #region Variáveis
     [Header("HUD")]
     [SerializeField] private Image healthBar;
-    [SerializeField] private TextMeshProUGUI ammoText;
-    [SerializeField] private Image reloadCircle;
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI waveAnnouncementText;
+    [SerializeField] private Image heatBar;
+    [SerializeField] private Gradient heatGradient;
 
 
     [Header("Modais")]
@@ -25,12 +26,13 @@ public class UIManager : MonoBehaviour
 
     [Header("Leaderboard")]
     [SerializeField] private LeaderboardManager leaderboardManager;
+    #endregion
 
+    #region Actions
     private void OnEnable()
     {
         Acoes.OnPlayerHealthChanged += UpdateHealth;
-        Acoes.OnAmmoChanged += UpdateAmmo;
-        Acoes.OnReloadChanged += UpdateReloadCircle;
+        Acoes.OnHeatChanged += UpdateHeatBar;
         Acoes.GameOver += ShowGameOver;
         Acoes.Victory += ShowVictory;
         Acoes.TimeOver += ShowTimeOver;
@@ -43,8 +45,7 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         Acoes.OnPlayerHealthChanged -= UpdateHealth;
-        Acoes.OnAmmoChanged -= UpdateAmmo;
-        Acoes.OnReloadChanged -= UpdateReloadCircle;
+        Acoes.OnHeatChanged -= UpdateHeatBar;
         Acoes.GameOver -= ShowGameOver;
         Acoes.Victory -= ShowVictory;
         Acoes.TimeOver -= ShowTimeOver;
@@ -53,6 +54,7 @@ public class UIManager : MonoBehaviour
         Acoes.OnWaveSpawn -= OnWaveSpawn;
         Acoes.OnTimeBetweenWaves -= OnTimeBetweenWaves;
     }
+    #endregion
 
     private void Start()
     {
@@ -66,8 +68,7 @@ public class UIManager : MonoBehaviour
         timeOverModal.SetActive(false);
         pauseModal.SetActive(false);
         healthBar.fillAmount = 1f;
-        reloadCircle.fillAmount = 0f;
-        reloadCircle.gameObject.SetActive(false);
+        heatBar.fillAmount = 0f;
     }
 
     public void UpdateTimer(float timeRemaining)
@@ -87,32 +88,11 @@ public class UIManager : MonoBehaviour
         healthBar.fillAmount = health / maxHealth;
     }
 
-    private void UpdateAmmo(int current, int max)
+    private void UpdateHeatBar(float currentHeat, float maxHeat)
     {
-        ammoText.text = $"{current}/{max}";
-    }
-
-    private void UpdateReloadCircle(bool isReloading)
-    {
-        reloadCircle.gameObject.SetActive(isReloading);
-
-        if (isReloading)
-            StartCoroutine(AnimateReloadCircle());
-    }
-
-    IEnumerator AnimateReloadCircle()
-    {
-        float elapsed = 0f;
-        reloadCircle.fillAmount = 0f;
-
-        while (elapsed < WeaponSystem.ReloadTime)
-        {
-            elapsed += Time.deltaTime;
-            reloadCircle.fillAmount = elapsed / WeaponSystem.ReloadTime;
-            yield return null;
-        }
-
-        reloadCircle.fillAmount = 1f;
+        Debug.Log($"Heat: {currentHeat} / {maxHeat}");
+        heatBar.fillAmount = currentHeat / maxHeat;
+        heatBar.color = heatGradient.Evaluate(heatBar.fillAmount);
     }
 
     private void UpdateScore(int score)
@@ -143,10 +123,9 @@ public class UIManager : MonoBehaviour
     private void DisableUI()
     {
         healthBar.gameObject.SetActive(false);
-        ammoText.gameObject.SetActive(false);
+        heatBar.gameObject.SetActive(false);
         timerText.gameObject.SetActive(false);
         waveText.gameObject.SetActive(false);
-        reloadCircle.gameObject.SetActive(false);
         scoreText.gameObject.SetActive(false);
         waveAnnouncementText.gameObject.SetActive(false);
     }

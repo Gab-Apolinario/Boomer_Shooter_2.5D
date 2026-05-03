@@ -5,24 +5,18 @@ public class WeaponSystem : MonoBehaviour
 {
     #region Variáveis
     InputHandler inputHandler;
-
-    [SerializeField] private Transform gunFront;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private float shotMaxRange;
-    [SerializeField] private float shotCooldown;
-    private float cooldownTimer;
-    [SerializeField] private float shotDamage;
-    [SerializeField] private int bulletsToShoot;
-    [SerializeField] private int chargerCapacity;
-    public static float ReloadTime { get; private set; }
+    [SerializeField] private ParticleSystem smokeEffect;
+    [SerializeField] private Transform gunFront;
 
-    [SerializeField] private bool isReloading;
-    private bool canShoot = true;
+    [Header("Configurações da Arma")]
+    [SerializeField] private WeaponConfigSO config;
+    [SerializeField] private bool isOverheated;
+    [SerializeField] private float currentHeat;
+    [SerializeField] private bool canShoot = true;
+    [SerializeField] private float cooldownTimer;
+    private Coroutine coolingCoroutine;
 
-    private int boltSize = 4;
-    private float boltSpeed = 100f;
-    private Vector3 boltPosition;
-    private Vector3 boltDirection;
     #endregion
 
     private void Start()
@@ -43,22 +37,15 @@ public class WeaponSystem : MonoBehaviour
         #endregion
 
         //Iniciação de variáveis
-        cooldownTimer = shotCooldown;
-        chargerCapacity = 15;
-        bulletsToShoot = chargerCapacity;
-        ReloadTime = 1.2f;
+        cooldownTimer = config.fireRate;
+        currentHeat = 0;
     }
 
     private void Update()
     {
-        if (bulletsToShoot > 0 && canShoot && inputHandler.IsShooting)
+        if (canShoot && inputHandler.IsShooting)
         {
             Shoot();
-        }
-
-        if (bulletsToShoot < chargerCapacity && canShoot && !isReloading && inputHandler.IsReloading)
-        {
-            StartCoroutine(Reload());
         }
 
         //Se atirou, começa cooldown
@@ -66,54 +53,93 @@ public class WeaponSystem : MonoBehaviour
         {
             cooldownTimer -= Time.deltaTime;
 
-            if (cooldownTimer <= 0 && !isReloading) //atingiu o tempo de cooldown e não está carregando
+            if (cooldownTimer <= 0 && !isOverheated) //atingiu o tempo de cooldown e não está carregando
             {
                 canShoot = true;
-                cooldownTimer = shotCooldown;
+                cooldownTimer = config.fireRate;
             }
         }
     }
 
     void Shoot()
     {
-        Debug.Log("Atirou!");
-        bulletsToShoot--;
-        Acoes.OnAmmoChanged?.Invoke(bulletsToShoot, chargerCapacity);
+        canShoot = false;
+        cooldownTimer = config.fireRate;
+        currentHeat += config.heatPerShot;
+        float heatRatio = currentHeat / config.heatCapacity;
+        var emission = smokeEffect.emission;
+        emission.rateOverTime = heatRatio * config.smokeEmissionRate;
+        Debug.Log($"heatRatio: {heatRatio} | emissão: {emission.rateOverTime.constant}");
+        smokeEffect.Play();
+        
+        Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity); //fillAmount barra);
         Acoes.PlayerAtirou?.Invoke(); //PARTICULA DE MUZZLE FLASH
 
+        if (currentHeat >= config.heatCapacity)
+        {
+            isOverheat();
+        }
+
+        if (currentHeat < config.heatCapacity && !isOverheated && !canShoot)
+        {
+            if (coolingCoroutine != null)
+            {
+                StopCoroutine(coolingCoroutine);
+            }
+            coolingCoroutine = StartCoroutine(GunCooling());
+        }
+
+#region raycast
         //retorna um bool
-        bool shot = Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hitInfo, shotMaxRange);
+        bool shot = Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hitInfo, config.maxRange);
 
         //Verifica se o objeto atingido é um inimigo e aplica dano
         if (shot && hitInfo.collider.TryGetComponent<BaseEnemy>(out BaseEnemy enemy))
         {
             //Aciona TakeDamage() do BaseEnemy
-            enemy.TakeDamage(shotDamage);
+            enemy.TakeDamage(config.damage);
         }
-
-        canShoot = false;
-        cooldownTimer = shotCooldown;
 
         if (shot) //se atingiu algo
         {
             //ACAO PARTICULA DE IMPACTO
             Acoes.OnImpact?.Invoke(hitInfo.point);
-            Debug.Log("Raycast bateu em: " + hitInfo.collider.name);
         }
+#endregion        
     }
 
-    IEnumerator Reload()
+    private void isOverheat()
     {
-        Acoes.OnReloadChanged?.Invoke(true);
-        Debug.Log("Recarregando Arma!");
-        isReloading = true;
+        isOverheated = true;
         canShoot = false;
-        yield return new WaitForSeconds(ReloadTime);
-        bulletsToShoot = chargerCapacity;
-        isReloading = false;
-        Acoes.OnReloadChanged?.Invoke(false);
-        Acoes.OnAmmoChanged?.Invoke(bulletsToShoot, chargerCapacity);
-        canShoot = true;
+        Acoes.OnOverheat?.Invoke();
+        Debug.Log("Arma superaquecida!");
+
+        if (coolingCoroutine != null)
+        {
+            StopCoroutine(coolingCoroutine);
+        }
+        coolingCoroutine = StartCoroutine(GunCooling());
     }
 
+    IEnumerator GunCooling()
+    {
+        yield return new WaitForSeconds(config.overheatCooldownDelay);
+
+        while (currentHeat > 0)
+        {
+            currentHeat -= config.coolingRate * Time.deltaTime;
+            Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity); //fillAmount barra);
+            var emission = smokeEffect.emission;
+            emission.rateOverTime = (currentHeat / config.heatCapacity) * config.smokeEmissionRate;
+            yield return null;
+        }
+
+        smokeEffect.Stop();
+        currentHeat = 0;
+        isOverheated = false;
+        coolingCoroutine = null;
+        canShoot = true;
+        Debug.Log("Arma resfriada, pronta para atirar novamente.");
+    }
 }
