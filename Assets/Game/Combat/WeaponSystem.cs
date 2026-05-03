@@ -8,7 +8,6 @@ public class WeaponSystem : MonoBehaviour
 
     [SerializeField] private Transform gunFront;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private float shotMaxRange;
     [SerializeField] private float shotCooldown;
     private float cooldownTimer;
@@ -41,15 +40,9 @@ public class WeaponSystem : MonoBehaviour
         {
             mainCamera = Camera.main;
         }
-
-        if (lineRenderer == null)
-        {
-            lineRenderer = GetComponent<LineRenderer>();
-        }
         #endregion
 
         //Iniciação de variáveis
-        lineRenderer.enabled = false;
         cooldownTimer = shotCooldown;
         chargerCapacity = 15;
         bulletsToShoot = chargerCapacity;

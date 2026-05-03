@@ -227,7 +227,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.18518448
+        value: 0.06
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -306,7 +306,7 @@ Transform:
   m_LocalScale: {x: 0.14549652, y: 0.14, z: 1.2090211}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3478049633558095639}
+  - {fileID: 592138669843665125}
   m_Father: {fileID: 1696681163899724507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8046383840090382787
@@ -342,7 +342,7 @@ Transform:
   - {fileID: 7895346696254197184}
   m_Father: {fileID: 1382680094003218752}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &4447212256354067270
+--- !u!1001 &415627152404960436
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -350,63 +350,59 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2337205158369636650}
     m_Modifications:
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3172112897215355839, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
+    - target: {fileID: 3172112897215355839, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
       propertyPath: m_Name
-      value: Muzzle_Flash
-      objectReference: {fileID: 0}
-    - target: {fileID: 5443908119499023994, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
-      propertyPath: looping
-      value: 0
+      value: Muzzle_Flash_Inimigo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
---- !u!4 &3478049633558095639 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
+--- !u!4 &592138669843665125 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 1005191443546309713, guid: 768773f3953ff2644bb0df21d036df3e, type: 3}
-  m_PrefabInstance: {fileID: 4447212256354067270}
+  m_CorrespondingSourceObject: {fileID: 1005191443546309713, guid: 86e11d185022ccd4ca8a1f8c81effcaf, type: 3}
+  m_PrefabInstance: {fileID: 415627152404960436}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4737759187299126350
 PrefabInstance:

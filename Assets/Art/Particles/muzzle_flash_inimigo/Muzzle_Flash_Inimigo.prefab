@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6971398343888536593}
   - component: {fileID: 5572696125133198085}
   m_Layer: 0
-  m_Name: Muzzle_Flash
+  m_Name: Muzzle_Flash_Inimigo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3880,7 +3880,7 @@ ParticleSystem:
   LightsModule:
     enabled: 1
     ratio: 0.1
-    light: {fileID: 6763948743685411911, guid: 7edbb7929a2ead147ab8bb2b25af76d1, type: 3}
+    light: {fileID: 6763948743685411911, guid: e4d02db878d78d741bf81385fecd6880, type: 3}
     randomDistribution: 1
     color: 1
     range: 1
@@ -4841,8 +4841,8 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dcc58d2d873e4674482a8b142cba5d0e, type: 2}
-  - {fileID: 2100000, guid: dcc58d2d873e4674482a8b142cba5d0e, type: 2}
+  - {fileID: 2100000, guid: 85b26797045164b4fad6327100de9202, type: 2}
+  - {fileID: 2100000, guid: 85b26797045164b4fad6327100de9202, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

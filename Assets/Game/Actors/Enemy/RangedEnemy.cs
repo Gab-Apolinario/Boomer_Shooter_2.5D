@@ -3,6 +3,7 @@ using System.Collections;
 
 public class RangedEnemy : BaseEnemy
 {
+    protected ParticleSystem muzzleFlashInimigo;
     protected LineRenderer lineRenderer;
     protected Transform gunFront;
     [SerializeField] protected LayerMask wallLayer;
@@ -23,6 +24,10 @@ public class RangedEnemy : BaseEnemy
         if (gunFront == null)
         {
             gunFront = transform.Find("GunHolder/Gun_Front");
+        }
+        if( muzzleFlashInimigo == null)
+        {
+            muzzleFlashInimigo = transform.Find("GunHolder/Gun_Front/Muzzle_Flash_Inimigo").GetComponent<ParticleSystem>();
         }
 
         playerScript = player.GetComponent<Player>();
@@ -61,6 +66,7 @@ public class RangedEnemy : BaseEnemy
     {
         Debug.Log("Ranged Enemy Shooting!");
 
+        muzzleFlashInimigo.Play();
         Vector3 shotSpread = new Vector3(Random.Range(-0.07f, 0.07f), Random.Range(-0.07f, 0.07f), Random.Range(-0.07f, 0.07f));
 
         Vector3 directionToPlayer = (player.position - transform.position).normalized + shotSpread;

@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintSpeed = 10f;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float verticalVelocity = -2f; //'gravidade' do jogador
+    [SerializeField] private Vector3 horizontalDirection;
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private bool canDash = true;
     [SerializeField] private float dashCooldown = 2f;
@@ -56,8 +57,8 @@ public class PlayerController : MonoBehaviour
         
         verticalVelocity = Mathf.Max(verticalVelocity, -20f);   //limita a velocidade de queda
 
-        Vector3 horizontalMove = new Vector3(inputHandler.MoveInput.x, 0, inputHandler.MoveInput.y);
-        horizontalMove = transform.TransformDirection(horizontalMove);    //fazer o player sempre para o lado que está olhando
+        horizontalDirection = new Vector3(inputHandler.MoveInput.x, 0, inputHandler.MoveInput.y);
+        horizontalDirection = transform.TransformDirection(horizontalDirection);    //fazer o player sempre para o lado que está olhando
 
         //se está correndo, usa velocidade de corrida, senão usa a normal
         float currentSpeed = moveSpeed;
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //Garante que a graviade não vai atuar na diagonal
-        Vector3 finalMove = horizontalMove * currentSpeed + Vector3.up * verticalVelocity + dashVelocity;
+        Vector3 finalMove = horizontalDirection * currentSpeed + Vector3.up * verticalVelocity + dashVelocity;
         characterController.Move(finalMove * Time.deltaTime);
         
         //Desacelera o dash ao longo do tempo
@@ -95,7 +96,13 @@ public class PlayerController : MonoBehaviour
         //Se o jogador apertar o botão de dash e o dash não estiver no cooldown, aplica a velocidade do dash
         if (inputHandler.IsDashing && canDash)
         {
-            dashVelocity = transform.forward * dashSpeed; //calcula a velocidade do dash na direção que o jogador está olhando
+            //se o jogador não estiver se movendo, dasha para a frente do jogador
+            if (horizontalDirection == Vector3.zero)
+            {
+                horizontalDirection = transform.forward;
+            }
+
+            dashVelocity = horizontalDirection.normalized * dashSpeed; //calcula a velocidade do dash na direção que o jogador está pressionando
             canDash = false; //desativa o dash até o cooldown terminar
             Invoke(nameof(ResetDash), dashCooldown); //chama ResetDash após o cooldown
         }
