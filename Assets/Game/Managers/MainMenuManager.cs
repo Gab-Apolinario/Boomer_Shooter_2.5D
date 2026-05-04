@@ -8,6 +8,12 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rankingText;
     [SerializeField] private LeaderboardManager leaderboardManager;
 
+    void Start()
+    {
+        leaderboardManager = FindAnyObjectByType<LeaderboardManager>();
+        leaderboardPanel.SetActive(false);
+    }
+
     public void OpenLeaderboard()
     {
         leaderboardPanel.SetActive(true);

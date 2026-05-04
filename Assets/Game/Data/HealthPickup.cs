@@ -24,6 +24,7 @@ public class HealthPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Acoes.OnHealthPickup?.Invoke();
         if (!other.CompareTag("Player"))
         {
             return;

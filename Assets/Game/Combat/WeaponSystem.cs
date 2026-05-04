@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class WeaponSystem : MonoBehaviour
 {
@@ -11,6 +13,8 @@ public class WeaponSystem : MonoBehaviour
 
     [Header("Configurações da Arma")]
     [SerializeField] private WeaponConfigSO config;
+    [SerializeField] private WeaponConfigSO[] weaponConfigs; //array para futuras armas
+    [SerializeField] private int currentWeaponIndex = 0;
     [SerializeField] private bool isOverheated;
     [SerializeField] private float currentHeat;
     [SerializeField] private bool canShoot = true;
@@ -43,6 +47,11 @@ public class WeaponSystem : MonoBehaviour
 
     private void Update()
     {
+        if (Keyboard.current.f9Key.wasPressedThisFrame)
+        {
+            SwitchWeapon();
+        }
+
         if (canShoot && inputHandler.IsShooting)
         {
             Shoot();
@@ -142,4 +151,19 @@ public class WeaponSystem : MonoBehaviour
         canShoot = true;
         Debug.Log("Arma resfriada, pronta para atirar novamente.");
     }
+
+    void SwitchWeapon()
+    {
+        currentWeaponIndex = (currentWeaponIndex + 1) % weaponConfigs.Length; //avança para o próximo indice, mas volta para 0 se ultrapassar o tamanho do array (%)
+        config = weaponConfigs[currentWeaponIndex]; //Substitui SO atual pela nova configuração
+        Debug.Log($"Arma trocada para: {config.weaponName}");
+
+        StopAllCoroutines();
+        canShoot = true;
+        isOverheated = false;
+        cooldownTimer = config.fireRate;
+        currentHeat = 0;
+        Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity); //reset fillAmount barra);
+    }
+
 }

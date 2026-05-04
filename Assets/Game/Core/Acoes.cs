@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class Acoes
 {
+    public static Action OnJump;
     public static Action<int> OnEnemyDie;
     public static Action OnPlayerDeath;
     public static Action OnAllEnemiesDead;
@@ -18,6 +19,7 @@ public static class Acoes
     public static Action<bool> OnReloadChanged;   //isReloading true/false
     public static Action OnOverheat; //arma superaquecida
     public static Action<float, float> OnPlayerHealthChanged; //health, maxHealth
+    public static Action OnHealthPickup; //pickup de vida
 
 
     //PARTICULAS

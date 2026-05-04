@@ -87,6 +87,7 @@ public class PlayerController : MonoBehaviour
         //Se o jogador apertar o botão de pulo e estiver no chão, aplica a força de pulo
         if (inputHandler.JumpInput && characterController.isGrounded)
         {
+            Acoes.OnJump?.Invoke();
             verticalVelocity = jumpForce;
         }
     }

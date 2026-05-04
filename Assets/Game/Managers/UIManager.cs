@@ -17,8 +17,11 @@ public class UIManager : MonoBehaviour
 
     [Header("Modais")]
     [SerializeField] private GameObject gameOverModal;
+    [SerializeField] private TextMeshProUGUI gameOverScoreText;
     [SerializeField] private GameObject victoryModal;
+    [SerializeField] private TextMeshProUGUI victoryScoreText;
     [SerializeField] private GameObject timeOverModal;
+    [SerializeField] private TextMeshProUGUI timeOverScoreText;
     [SerializeField] private GameObject pauseModal;
     [SerializeField] private Slider mouseSensSlider;
     [SerializeField] private Slider gamepadSensSlider;
@@ -97,7 +100,9 @@ public class UIManager : MonoBehaviour
 
     private void UpdateScore(int score)
     {
-        scoreText.text = score.ToString("D4");
+        gameOverScoreText.text = score.ToString("D4");
+        victoryScoreText.text = score.ToString("D4");
+        timeOverScoreText.text = score.ToString("D4");
         leaderboardManager.SetPendingScore(score);
     }
 
