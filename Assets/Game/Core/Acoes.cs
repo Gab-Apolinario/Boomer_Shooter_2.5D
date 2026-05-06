@@ -17,6 +17,7 @@ public static class Acoes
     public static Action<int> ResolveScore;
     public static Action<float, float> OnHeatChanged; //currentHeat, maxHeat
     public static Action<bool> OnReloadChanged;   //isReloading true/false
+    public static Action<float, float> OnStaminaChanged; //currentStamina, maxStamina
     public static Action OnOverheat; //arma superaquecida
     public static Action<float, float> OnPlayerHealthChanged; //health, maxHealth
     public static Action OnHealthPickup; //pickup de vida

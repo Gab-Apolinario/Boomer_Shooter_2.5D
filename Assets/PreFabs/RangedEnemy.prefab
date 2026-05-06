@@ -154,19 +154,19 @@ MonoBehaviour:
   originalColor: {r: 0, g: 0, b: 0, a: 0}
   meshRenderer: {fileID: 7051640245388966595}
   health: 40
-  sprintSpeed: 8.5
+  sprintSpeed: 9
   damage: 10
   score: 0
   navAgent: {fileID: 5730550862896000372}
   player: {fileID: 0}
   detectionRange: 40
-  attackingRange: 20
+  attackingRange: 25
   fieldOfView: 110
   playerDetected: 0
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
-  shotCooldown: 2
+  shotCooldown: 1.5
 --- !u!120 &7600925249756232616
 LineRenderer:
   serializedVersion: 3

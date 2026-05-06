@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveAnnouncementText;
     [SerializeField] private Image heatBar;
     [SerializeField] private Gradient heatGradient;
-
+    [SerializeField] private Image staminaBar;
 
     [Header("Modais")]
     [SerializeField] private GameObject gameOverModal;
@@ -24,7 +24,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeOverScoreText;
     [SerializeField] private GameObject pauseModal;
     [SerializeField] private Slider mouseSensSlider;
+    [SerializeField] private TextMeshProUGUI mouseSensValue;
     [SerializeField] private Slider gamepadSensSlider;
+    [SerializeField] private TextMeshProUGUI gamepadSensValue;
     [SerializeField] private TextMeshProUGUI scoreText;
 
     [Header("Leaderboard")]
@@ -36,6 +38,7 @@ public class UIManager : MonoBehaviour
     {
         Acoes.OnPlayerHealthChanged += UpdateHealth;
         Acoes.OnHeatChanged += UpdateHeatBar;
+        Acoes.OnStaminaChanged += UpdateStamina;
         Acoes.GameOver += ShowGameOver;
         Acoes.Victory += ShowVictory;
         Acoes.TimeOver += ShowTimeOver;
@@ -49,6 +52,7 @@ public class UIManager : MonoBehaviour
     {
         Acoes.OnPlayerHealthChanged -= UpdateHealth;
         Acoes.OnHeatChanged -= UpdateHeatBar;
+        Acoes.OnStaminaChanged -= UpdateStamina;
         Acoes.GameOver -= ShowGameOver;
         Acoes.Victory -= ShowVictory;
         Acoes.TimeOver -= ShowTimeOver;
@@ -72,6 +76,7 @@ public class UIManager : MonoBehaviour
         pauseModal.SetActive(false);
         healthBar.fillAmount = 1f;
         heatBar.fillAmount = 0f;
+        staminaBar.fillAmount = 1f;
     }
 
     public void UpdateTimer(float timeRemaining)
@@ -93,9 +98,13 @@ public class UIManager : MonoBehaviour
 
     private void UpdateHeatBar(float currentHeat, float maxHeat)
     {
-        Debug.Log($"Heat: {currentHeat} / {maxHeat}");
         heatBar.fillAmount = currentHeat / maxHeat;
         heatBar.color = heatGradient.Evaluate(heatBar.fillAmount);
+    }
+    
+    private void UpdateStamina(float currentStamina, float maxStamina)
+    {
+        staminaBar.fillAmount = currentStamina / maxStamina;
     }
 
     private void UpdateScore(int score)
@@ -103,6 +112,7 @@ public class UIManager : MonoBehaviour
         gameOverScoreText.text = score.ToString("D4");
         victoryScoreText.text = score.ToString("D4");
         timeOverScoreText.text = score.ToString("D4");
+        scoreText.text = score.ToString("D4");
         leaderboardManager.SetPendingScore(score);
     }
 
@@ -140,7 +150,11 @@ public class UIManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         mouseSensSlider.value = SettingsManager.MouseSensibility;
+        mouseSensValue.text = SettingsManager.MouseSensibility.ToString("F1");
         gamepadSensSlider.value = SettingsManager.GamepadSensibility;
+        gamepadSensValue.text = SettingsManager.GamepadSensibility.ToString("F1");
+        mouseSensSlider.onValueChanged.AddListener(value => mouseSensValue.text = value.ToString("F1"));
+        gamepadSensSlider.onValueChanged.AddListener(value => gamepadSensValue.text = value.ToString("F1"));
         pauseModal.SetActive(true);
     }
 

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -5,11 +6,19 @@ public class PlayerController : MonoBehaviour
     #region Variáveis
     private InputHandler inputHandler;
     [SerializeField] private CharacterController characterController;
+
+    [Header("Movimento")]
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float sprintSpeed = 10f;
+    [SerializeField] private float sprintSpeed = 15f;
+    [SerializeField] private float stamina;
+    private float maxStamina = 100f;
+    [SerializeField] private bool isRegeneratingStamina = false;
+    [SerializeField] private bool canSprint = true;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float verticalVelocity = -2f; //'gravidade' do jogador
     [SerializeField] private Vector3 horizontalDirection;
+
+    [Header("Dash")]
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private bool canDash = true;
     [SerializeField] private float dashCooldown = 2f;
@@ -26,6 +35,8 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        stamina = maxStamina;
+
         //SEGURANÇA - Pegar o CharacterController do jogador se no começo estiver vazio
         if (characterController == null)
         {
@@ -62,9 +73,25 @@ public class PlayerController : MonoBehaviour
 
         //se está correndo, usa velocidade de corrida, senão usa a normal
         float currentSpeed = moveSpeed;
-        if (inputHandler.IsSprinting)
+        //Jogado só pode correr se estiver stamina e se estiver se movendo para frente
+        if (inputHandler.IsSprinting && canSprint && inputHandler.MoveInput.y > 0)
         {
             currentSpeed = sprintSpeed;
+            stamina -= 30f * Time.deltaTime; //consome stamina enquanto corre
+            Acoes.OnStaminaChanged?.Invoke(stamina, maxStamina); //atualiza a barra de stamina na UI
+
+            if (stamina <= 0)
+            {
+                stamina = 0;
+                canSprint = false; //desativa a corrida quando a stamina acabar
+                StartCoroutine(StaminaCooldown()); //começa a regenerar a stamina após um tempo
+            }
+        }
+
+        //Se o jogador parar de correr e a stamina não estiver cheia, começa a regenerar a stamina
+        if (!inputHandler.IsSprinting && stamina < 100f && !isRegeneratingStamina)
+        {
+            StartCoroutine(StaminaCooldown());
         }
 
         //Garante que a graviade não vai atuar na diagonal
@@ -73,6 +100,30 @@ public class PlayerController : MonoBehaviour
         
         //Desacelera o dash ao longo do tempo
         dashVelocity = Vector3.Lerp(dashVelocity, Vector3.zero, dashDeceleration * Time.deltaTime);
+    }
+
+    IEnumerator StaminaCooldown()
+    {
+        isRegeneratingStamina = true;
+        yield return new WaitForSeconds(1.5f); //espera X segundos antes de começar a regenerar a stamina
+        
+        //regenera a stamina enquanto ela não estiver cheia e o jogador não estiver correndo
+        while (stamina < 100f && !inputHandler.IsSprinting)
+        {
+            stamina += 35f * Time.deltaTime; //regenera a stamina ao longo do tempo
+            Acoes.OnStaminaChanged?.Invoke(stamina, maxStamina);
+            yield return null; //espera o próximo frame
+        }
+
+        if (stamina >= 100f)
+        {
+            stamina = 100f;
+        }
+
+        stamina = Mathf.Min(stamina, 100f);
+        Acoes.OnStaminaChanged?.Invoke(stamina, maxStamina);
+        canSprint = true;
+        isRegeneratingStamina = false;
     }
 
     void Rotation()
