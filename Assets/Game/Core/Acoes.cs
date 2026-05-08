@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class Acoes
 {
+    public static Action OnMeleeAttack;
     public static Action OnJump;
     public static Action<int> OnEnemyDie;
     public static Action OnPlayerDeath;

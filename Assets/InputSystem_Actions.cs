@@ -592,10 +592,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""ac0d9558-1a7e-4588-9469-d278bbfa1e31"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""MeleeAtack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false

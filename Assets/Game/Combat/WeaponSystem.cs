@@ -77,7 +77,6 @@ public class WeaponSystem : MonoBehaviour
         float heatRatio = currentHeat / config.heatCapacity;
         var emission = smokeEffect.emission;
         emission.rateOverTime = heatRatio * config.smokeEmissionRate;
-        Debug.Log($"heatRatio: {heatRatio} | emissão: {emission.rateOverTime.constant}");
         smokeEffect.Play();
         
         Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity); //fillAmount barra);
