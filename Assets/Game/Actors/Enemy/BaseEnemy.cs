@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 public class BaseEnemy : MonoBehaviour
 {
-    #region ID
+    #region VARIÁVEIS
     protected enum EnemyState
     {
         Idle,
@@ -25,7 +25,11 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected NavMeshAgent navAgent;
     [SerializeField] protected Transform player;
     [SerializeField] protected float detectionRange;
+    protected float flanckAngle;
+    [SerializeField] protected Vector3 randomDestination;
+    [SerializeField] protected bool isUpdatingDestination;
     [SerializeField] protected float attackingRange;
+    [SerializeField] protected float offSetRadius;
     [SerializeField] protected float fieldOfView;
     [SerializeField] protected bool playerDetected;
     protected bool collisionDetected;
@@ -35,6 +39,8 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual void Start()
     {
+        sprintSpeed += Random.Range(-0.5f, 1f);
+        flanckAngle = Random.Range(0f, 360f);
         meshRenderer = GetComponent<MeshRenderer>();
         originalColor = meshRenderer.material.color;
 
@@ -64,10 +70,23 @@ public class BaseEnemy : MonoBehaviour
     {
         if (currentState == EnemyState.Chasing)
         {
-            Vector3 destination = new Vector3(player.position.x, transform.position.y, player.position.z);
-            navAgent.SetDestination(destination);
+            navAgent.SetDestination(randomDestination);
             navAgent.speed = sprintSpeed;
         }
+    }
+
+    IEnumerator UpdateChaseDestination()
+    {
+        isUpdatingDestination = true;
+        
+        while (currentState == EnemyState.Chasing)
+        {
+            Vector3 offSet = Quaternion.Euler(0, flanckAngle, 0) * Vector3.forward * offSetRadius;
+            randomDestination = player.position + offSet;
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        isUpdatingDestination = false;
     }
 
     public virtual void TakeDamage(float amount)
@@ -119,6 +138,11 @@ public class BaseEnemy : MonoBehaviour
         {
             currentState = EnemyState.Chasing;
             navAgent.updateRotation = true;
+
+            if (!isUpdatingDestination)
+            {
+                StartCoroutine(UpdateChaseDestination());
+            }
         }
         else if (!playerDetected)
         {
@@ -136,6 +160,7 @@ public class BaseEnemy : MonoBehaviour
     {
         playerDetected = true;
         currentState = EnemyState.Chasing;
+        StartCoroutine(UpdateChaseDestination());
     }
 
     private void OnDrawGizmos()

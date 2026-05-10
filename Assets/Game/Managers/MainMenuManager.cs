@@ -5,6 +5,7 @@ public class MainMenuManager : MonoBehaviour
 {
     [Header("Leaderboard")]
     [SerializeField] private GameObject leaderboardPanel;
+    [SerializeField] private GameObject controlsPanel;
     [SerializeField] private TextMeshProUGUI rankingText;
     [SerializeField] private LeaderboardManager leaderboardManager;
 
@@ -12,6 +13,7 @@ public class MainMenuManager : MonoBehaviour
     {
         leaderboardManager = FindAnyObjectByType<LeaderboardManager>();
         leaderboardPanel.SetActive(false);
+        controlsPanel.SetActive(false);
     }
 
     public void OpenLeaderboard()
@@ -36,5 +38,15 @@ public class MainMenuManager : MonoBehaviour
             display += $"{i + 1}. {entries[i].name} — {entries[i].score} — {minutes:00}:{seconds:00}\n";
         }
         rankingText.text = display;
+    }
+
+    public void OpenControls()
+    {
+        controlsPanel.SetActive(true);
+    }
+
+    public void CloseControls()
+    {
+        controlsPanel.SetActive(false);
     }
 }

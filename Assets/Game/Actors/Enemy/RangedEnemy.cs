@@ -67,7 +67,7 @@ public class RangedEnemy : BaseEnemy
         Debug.Log("Ranged Enemy Shooting!");
 
         muzzleFlashInimigo.Play();
-        Vector3 shotSpread = new Vector3(Random.Range(-0.07f, 0.07f), Random.Range(-0.07f, 0.07f), Random.Range(-0.07f, 0.07f));
+        Vector3 shotSpread = new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
 
         Vector3 directionToPlayer = (player.position - transform.position).normalized + shotSpread;
         

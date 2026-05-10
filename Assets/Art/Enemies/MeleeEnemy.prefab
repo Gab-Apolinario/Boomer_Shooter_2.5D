@@ -130,13 +130,16 @@ MonoBehaviour:
   originalColor: {r: 0, g: 0, b: 0, a: 0}
   meshRenderer: {fileID: 9070409887367434154}
   health: 30
-  sprintSpeed: 9.5
+  sprintSpeed: 10
   damage: 5
   score: 0
   navAgent: {fileID: 6174383397823694448}
   player: {fileID: 0}
   detectionRange: 20
+  randomDestination: {x: 0, y: 0, z: 0}
+  isUpdatingDestination: 0
   attackingRange: 2.5
+  offSetRadius: 2
   fieldOfView: 110
   playerDetected: 0
   attackCooldown: 2

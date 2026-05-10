@@ -3,7 +3,10 @@ using UnityEngine;
 public class DashParticle : MonoBehaviour
 {
     //INICIAR A VARIAVEL DE PARTICULA
-    [SerializeField] private ParticleSystem dashParticle;
+    [SerializeField] private ParticleSystem dashFrente;
+    [SerializeField] private ParticleSystem dashTras;
+    [SerializeField] private ParticleSystem dashRight;
+    [SerializeField] private ParticleSystem dashLeft;
 
     private void OnEnable()
     {
@@ -15,16 +18,13 @@ public class DashParticle : MonoBehaviour
         Acoes.OnDash -= PlayDashParticle;
     }
 
-    void Start()
+    private void PlayDashParticle(Vector3 direction)
     {
-        if (dashParticle == null)
-        {
-            dashParticle = GetComponent<ParticleSystem>();
-        }
-    }
+        Vector3 localDir = transform.InverseTransformDirection(direction);
 
-    private void PlayDashParticle()
-    {
-        dashParticle.Play();
+        if (localDir.z > 0.5f) dashFrente.Play();
+        else if (localDir.z < -0.5f) dashTras.Play();
+        else if (localDir.x > 0.5f) dashRight.Play();
+        else if (localDir.x < -0.5f) dashLeft.Play();
     }
 }

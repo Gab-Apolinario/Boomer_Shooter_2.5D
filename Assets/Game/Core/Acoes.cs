@@ -27,5 +27,5 @@ public static class Acoes
     //PARTICULAS
     public static Action PlayerAtirou; //MUZZLE FLASH
     public static Action<Vector3> OnImpact; //IMPACTO
-    public static Action OnDash; //DASH
+    public static Action<Vector3> OnDash; //DASH
 }

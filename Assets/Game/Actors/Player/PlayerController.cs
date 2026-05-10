@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CharacterController characterController;
 
     [Header("Movimento")]
+    [SerializeField] private ParticleSystem corrida;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float sprintSpeed = 15f;
     [SerializeField] private float stamina;
@@ -76,12 +77,14 @@ public class PlayerController : MonoBehaviour
         //Jogado só pode correr se estiver stamina e se estiver se movendo para frente
         if (inputHandler.IsSprinting && canSprint && inputHandler.MoveInput.y > 0)
         {
+            corrida.Play();
             currentSpeed = sprintSpeed;
             stamina -= 30f * Time.deltaTime; //consome stamina enquanto corre
             Acoes.OnStaminaChanged?.Invoke(stamina, maxStamina); //atualiza a barra de stamina na UI
 
             if (stamina <= 0)
             {
+                corrida.Stop();
                 stamina = 0;
                 canSprint = false; //desativa a corrida quando a stamina acabar
                 StartCoroutine(StaminaCooldown()); //começa a regenerar a stamina após um tempo
@@ -91,6 +94,7 @@ public class PlayerController : MonoBehaviour
         //Se o jogador parar de correr e a stamina não estiver cheia, começa a regenerar a stamina
         if (!inputHandler.IsSprinting && stamina < 100f && !isRegeneratingStamina)
         {
+            corrida.Stop();
             StartCoroutine(StaminaCooldown());
         }
 
@@ -148,7 +152,6 @@ public class PlayerController : MonoBehaviour
         //Se o jogador apertar o botão de dash e o dash não estiver no cooldown, aplica a velocidade do dash
         if (inputHandler.IsDashing && canDash)
         {
-            Acoes.OnDash?.Invoke(); //AÇÃO DE DASH
             //se o jogador não estiver se movendo, dasha para a frente do jogador
             if (horizontalDirection == Vector3.zero)
             {
@@ -156,6 +159,7 @@ public class PlayerController : MonoBehaviour
             }
 
             dashVelocity = horizontalDirection.normalized * dashSpeed; //calcula a velocidade do dash na direção que o jogador está pressionando
+            Acoes.OnDash?.Invoke(horizontalDirection.normalized); //AÇÃO DE DASH
             canDash = false; //desativa o dash até o cooldown terminar
             Invoke(nameof(ResetDash), dashCooldown); //chama ResetDash após o cooldown
         }
