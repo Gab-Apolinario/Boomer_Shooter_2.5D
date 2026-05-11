@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7702590807336829368}
   - component: {fileID: 5719956230822578}
   - component: {fileID: 6174383397823694448}
+  - component: {fileID: 8541873847624283428}
   m_Layer: 0
   m_Name: MeleeEnemy
   m_TagString: Enemy
@@ -142,7 +143,7 @@ MonoBehaviour:
   offSetRadius: 2
   fieldOfView: 110
   playerDetected: 0
-  attackCooldown: 2
+  attackCooldown: 1.5
   attackCooldownTimer: 0
   canAttack: 1
 --- !u!195 &6174383397823694448
@@ -167,3 +168,21 @@ NavMeshAgent:
   m_BaseOffset: 0.47
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &8541873847624283428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4064662653855952883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d210dc342faadec42ac4cf99068ffd47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::OnScreenPointerPlugin.OnScreenPointerObject
+  offset_local: {x: 0, y: 0}
+  moveInCircle: 1
+  circleSizeNormalized: 0.5
+  inScreenSprite: {fileID: 0}
+  outScreenSprite: {fileID: 21300000, guid: e08badc09e06c824d9253f5aa3fbbd1d, type: 3}
+  uiImagePrefab: {fileID: 2343905586146208888, guid: bfb7e93f7d537c94b8fd6cfe65b4b1ed, type: 3}

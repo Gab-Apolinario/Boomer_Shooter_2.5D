@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3116526190165507693}
   - component: {fileID: 7436063426261971808}
   - component: {fileID: 5934783411779702458}
+  - component: {fileID: 7103434743822511259}
   m_Layer: 0
   m_Name: SM_SciFi_Weapons_04
   m_TagString: Untagged
@@ -133,6 +134,24 @@ MonoBehaviour:
   beamWidth: 1
   beamOrigin: {fileID: 106051683605463129}
   beamMaterial: {fileID: 2100000, guid: d985073bf42ea254e83bd8c959e5db8f, type: 2}
+--- !u!114 &7103434743822511259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3477021349890465720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d210dc342faadec42ac4cf99068ffd47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::OnScreenPointerPlugin.OnScreenPointerObject
+  offset_local: {x: 0, y: 0}
+  moveInCircle: 1
+  circleSizeNormalized: 0.5
+  inScreenSprite: {fileID: 0}
+  outScreenSprite: {fileID: 21300000, guid: e08badc09e06c824d9253f5aa3fbbd1d, type: 3}
+  uiImagePrefab: {fileID: 2343905586146208888, guid: 9d6dc08772027dc45a2d0f1e3d746326, type: 3}
 --- !u!1 &7030981371088073909
 GameObject:
   m_ObjectHideFlags: 0

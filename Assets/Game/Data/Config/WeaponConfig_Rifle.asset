@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponConfigSO
   weaponName: Rifle Neon
   smokeEmissionRate: 30
-  damage: 20
+  damage: 40
   fireRate: 1
   maxRange: 200
   heatPerShot: 15

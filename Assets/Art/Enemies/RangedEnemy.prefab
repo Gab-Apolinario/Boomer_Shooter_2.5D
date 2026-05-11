@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5730550862896000372}
   - component: {fileID: 5132147718466460018}
   - component: {fileID: 7600925249756232616}
+  - component: {fileID: 4539638070659447638}
   m_Layer: 0
   m_Name: RangedEnemy
   m_TagString: Enemy
@@ -155,7 +156,7 @@ MonoBehaviour:
   meshRenderer: {fileID: 7051640245388966595}
   health: 40
   sprintSpeed: 10
-  damage: 10
+  damage: 15
   score: 0
   navAgent: {fileID: 5730550862896000372}
   player: {fileID: 0}
@@ -169,7 +170,7 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
-  shotCooldown: 1
+  shotCooldown: 0.7
 --- !u!120 &7600925249756232616
 LineRenderer:
   serializedVersion: 3
@@ -280,6 +281,24 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &4539638070659447638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648012368314418281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d210dc342faadec42ac4cf99068ffd47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::OnScreenPointerPlugin.OnScreenPointerObject
+  offset_local: {x: 0, y: 0}
+  moveInCircle: 1
+  circleSizeNormalized: 0.5
+  inScreenSprite: {fileID: 0}
+  outScreenSprite: {fileID: 21300000, guid: e08badc09e06c824d9253f5aa3fbbd1d, type: 3}
+  uiImagePrefab: {fileID: 2343905586146208888, guid: bfb7e93f7d537c94b8fd6cfe65b4b1ed, type: 3}
 --- !u!1 &2374059962941051797
 GameObject:
   m_ObjectHideFlags: 0
