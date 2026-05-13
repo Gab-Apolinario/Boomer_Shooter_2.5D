@@ -9,19 +9,15 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movimento")]
     [SerializeField] private ParticleSystem corrida;
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float sprintSpeed = 15f;
-    [SerializeField] private float stamina;
-    private float maxStamina = 100f;
-    [SerializeField] private bool isRegeneratingStamina = false;
-    [SerializeField] private bool canSprint = true;
-    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float verticalVelocity = -2f; //'gravidade' do jogador
     [SerializeField] private Vector3 horizontalDirection;
 
     [Header("Dash")]
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private bool canDash = true;
+    [SerializeField] public bool isInvincible = false;
+    [SerializeField] public float invencibilityDuration;
     [SerializeField] private float dashCooldown = 2f;
     [SerializeField] private float dashDeceleration = 5f;
     [SerializeField] private Vector3 dashVelocity;
@@ -36,8 +32,6 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        stamina = maxStamina;
-
         //SEGURANÇA - Pegar o CharacterController do jogador se no começo estiver vazio
         if (characterController == null)
         {
@@ -49,7 +43,8 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         inputHandler.UpdateActiveDevice();
-        Jump();
+        GetMovementDot();
+
         Dash();
         Move();
         Rotation();
@@ -72,62 +67,12 @@ public class PlayerController : MonoBehaviour
         horizontalDirection = new Vector3(inputHandler.MoveInput.x, 0, inputHandler.MoveInput.y);
         horizontalDirection = transform.TransformDirection(horizontalDirection);    //fazer o player sempre para o lado que está olhando
 
-        //se está correndo, usa velocidade de corrida, senão usa a normal
-        float currentSpeed = moveSpeed;
-        //Jogado só pode correr se estiver stamina e se estiver se movendo para frente
-        if (inputHandler.IsSprinting && canSprint && inputHandler.MoveInput.y > 0)
-        {
-            corrida.Play();
-            currentSpeed = sprintSpeed;
-            stamina -= 30f * Time.deltaTime; //consome stamina enquanto corre
-            Acoes.OnStaminaChanged?.Invoke(stamina, maxStamina); //atualiza a barra de stamina na UI
-
-            if (stamina <= 0)
-            {
-                corrida.Stop();
-                stamina = 0;
-                canSprint = false; //desativa a corrida quando a stamina acabar
-                StartCoroutine(StaminaCooldown()); //começa a regenerar a stamina após um tempo
-            }
-        }
-
-        //Se o jogador parar de correr e a stamina não estiver cheia, começa a regenerar a stamina
-        if (!inputHandler.IsSprinting && stamina < 100f && !isRegeneratingStamina)
-        {
-            corrida.Stop();
-            StartCoroutine(StaminaCooldown());
-        }
-
         //Garante que a graviade não vai atuar na diagonal
-        Vector3 finalMove = horizontalDirection * currentSpeed + Vector3.up * verticalVelocity + dashVelocity;
+        Vector3 finalMove = horizontalDirection * moveSpeed + Vector3.up * verticalVelocity + dashVelocity;
         characterController.Move(finalMove * Time.deltaTime);
         
         //Desacelera o dash ao longo do tempo
         dashVelocity = Vector3.Lerp(dashVelocity, Vector3.zero, dashDeceleration * Time.deltaTime);
-    }
-
-    IEnumerator StaminaCooldown()
-    {
-        isRegeneratingStamina = true;
-        yield return new WaitForSeconds(1.5f); //espera X segundos antes de começar a regenerar a stamina
-        
-        //regenera a stamina enquanto ela não estiver cheia e o jogador não estiver correndo
-        while (stamina < 100f && !inputHandler.IsSprinting)
-        {
-            stamina += 35f * Time.deltaTime; //regenera a stamina ao longo do tempo
-            Acoes.OnStaminaChanged?.Invoke(stamina, maxStamina);
-            yield return null; //espera o próximo frame
-        }
-
-        if (stamina >= 100f)
-        {
-            stamina = 100f;
-        }
-
-        stamina = Mathf.Min(stamina, 100f);
-        Acoes.OnStaminaChanged?.Invoke(stamina, maxStamina);
-        canSprint = true;
-        isRegeneratingStamina = false;
     }
 
     void Rotation()
@@ -135,16 +80,6 @@ public class PlayerController : MonoBehaviour
         //Operador ternário. Se o input for o gamepad, usa a sensibilidade do gamepad, senão usa a sensibilidade do mouse
         float sensitivity = inputHandler.IsGamepad ? SettingsManager.GamepadSensibility : SettingsManager.MouseSensibility;
         transform.Rotate(0, inputHandler.LookInput.x * Time.deltaTime * sensitivity, 0);
-    }
-
-    void Jump()
-    {
-        //Se o jogador apertar o botão de pulo e estiver no chão, aplica a força de pulo
-        if (inputHandler.JumpInput && characterController.isGrounded)
-        {
-            Acoes.OnJump?.Invoke();
-            verticalVelocity = jumpForce;
-        }
     }
 
     void Dash()
@@ -158,16 +93,29 @@ public class PlayerController : MonoBehaviour
                 horizontalDirection = transform.forward;
             }
 
+            isInvincible = true; //torna o jogador invencível durante o dash
             dashVelocity = horizontalDirection.normalized * dashSpeed; //calcula a velocidade do dash na direção que o jogador está pressionando
             Acoes.OnDash?.Invoke(horizontalDirection.normalized); //AÇÃO DE DASH
+            Invoke(nameof(ResetInvincibility), invencibilityDuration); //chama ResetInvincibility após a duração da invencibilidade
             canDash = false; //desativa o dash até o cooldown terminar
             Invoke(nameof(ResetDash), dashCooldown); //chama ResetDash após o cooldown
         }
     }
 
+    void ResetInvincibility()
+    {
+        isInvincible = false; //desativa a invencibilidade após o dash
+    } 
+
     void ResetDash()
     {
         canDash = true;
         dashVelocity = Vector3.zero; //reseta a velocidade do dash
+    }
+
+    public float GetMovementDot()
+    {
+        float dot = Vector3.Dot(horizontalDirection.normalized, transform.forward);
+        return dot;
     }
 }

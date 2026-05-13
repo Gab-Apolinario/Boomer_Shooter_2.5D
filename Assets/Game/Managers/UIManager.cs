@@ -13,9 +13,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveAnnouncementText;
     [SerializeField] private Image heatBar;
     [SerializeField] private Gradient heatGradient;
-    [SerializeField] private Image staminaBar;
-
     [Header("Modais")]
+    
     [SerializeField] private GameObject gameOverModal;
     [SerializeField] private TextMeshProUGUI gameOverScoreText;
     [SerializeField] private GameObject victoryModal;
@@ -38,7 +37,6 @@ public class UIManager : MonoBehaviour
     {
         Acoes.OnPlayerHealthChanged += UpdateHealth;
         Acoes.OnHeatChanged += UpdateHeatBar;
-        Acoes.OnStaminaChanged += UpdateStamina;
         Acoes.GameOver += ShowGameOver;
         Acoes.Victory += ShowVictory;
         Acoes.TimeOver += ShowTimeOver;
@@ -52,7 +50,6 @@ public class UIManager : MonoBehaviour
     {
         Acoes.OnPlayerHealthChanged -= UpdateHealth;
         Acoes.OnHeatChanged -= UpdateHeatBar;
-        Acoes.OnStaminaChanged -= UpdateStamina;
         Acoes.GameOver -= ShowGameOver;
         Acoes.Victory -= ShowVictory;
         Acoes.TimeOver -= ShowTimeOver;
@@ -76,7 +73,6 @@ public class UIManager : MonoBehaviour
         pauseModal.SetActive(false);
         healthBar.fillAmount = 1f;
         heatBar.fillAmount = 0f;
-        staminaBar.fillAmount = 1f;
     }
 
     public void UpdateTimer(float timeRemaining)
@@ -100,11 +96,6 @@ public class UIManager : MonoBehaviour
     {
         heatBar.fillAmount = currentHeat / maxHeat;
         heatBar.color = heatGradient.Evaluate(heatBar.fillAmount);
-    }
-    
-    private void UpdateStamina(float currentStamina, float maxStamina)
-    {
-        staminaBar.fillAmount = currentStamina / maxStamina;
     }
 
     private void UpdateScore(int score)

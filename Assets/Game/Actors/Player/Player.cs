@@ -7,9 +7,11 @@ public class Player : MonoBehaviour
     [Header("VIDA")]
     [SerializeField] private float health;
     [SerializeField] private float MaxHealth;
+    PlayerController playerController;
 
     void Start()
     {
+        playerController = GetComponent<PlayerController>();
         MaxHealth = 100;
         health = MaxHealth;
     }
@@ -17,7 +19,14 @@ public class Player : MonoBehaviour
     //Função para receber dano
     public void TakeDamage(float amount)
     {
-        health -= amount;
+        if (playerController.isInvincible)
+        {
+            return;
+        }
+        else
+        {
+            health -= amount;
+        }
 
         Acoes.OnPlayerHealthChanged?.Invoke(health, MaxHealth);
 

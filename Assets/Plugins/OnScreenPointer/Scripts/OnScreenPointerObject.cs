@@ -60,18 +60,18 @@ namespace OnScreenPointerPlugin
 
         private void OnEnable()
         {
-            uiImage.gameObject.SetActive(true);
+            //uiImage.gameObject.SetActive(true);
         }
 
         private void OnDisable()
         {
-            uiImage?.gameObject?.SetActive(false);
+            //uiImage?.gameObject?.SetActive(false);
         }
 
         private void OnDestroy()
         {
-            if(uiImage?.gameObject)
-             Destroy(uiImage.gameObject);
+            // if(uiImage?.gameObject)
+            //  Destroy(uiImage.gameObject);
         }
         // Update is called once per frame
         void Update()

@@ -29,7 +29,6 @@ public class AudioManager : MonoBehaviour
 
     private void OnEnable()
     {
-        Acoes.OnJump += PlayJump;
         Acoes.PlayerAtirou += PlayShoot;
         Acoes.OnOverheat += PlayOverheat;
         Acoes.OnHealthPickup += PlayHealthPickup;
@@ -37,7 +36,6 @@ public class AudioManager : MonoBehaviour
 
     private void OnDisable()
     {
-        Acoes.OnJump -= PlayJump;
         Acoes.PlayerAtirou -= PlayShoot;
         Acoes.OnOverheat -= PlayOverheat;
         Acoes.OnHealthPickup -= PlayHealthPickup;

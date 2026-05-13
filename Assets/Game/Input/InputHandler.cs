@@ -43,24 +43,10 @@ public class InputHandler
         get { return inputActions.Player.Look.ReadValue<Vector2>(); }
     }
 
-    public bool JumpInput
-    {
-        get { return inputActions.Player.Jump.ReadValue<float>() > 0.5f; }
-    }
-
-    public bool IsSprinting
-    {
-        get { return inputActions.Player.Sprint.ReadValue<float>() > 0.5f; }
-    }
     
     public bool IsShooting
     {
         get { return inputActions.Player.Shoot.ReadValue<float>() > 0.5f; }
-    }
-
-    public bool IsReloading
-    {
-        get { return inputActions.Player.Reload.ReadValue<float>() > 0.5f; }
     }
 
     public bool IsMeleeAttacking

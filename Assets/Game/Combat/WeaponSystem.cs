@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +7,7 @@ public class WeaponSystem : MonoBehaviour
 {
     #region Variáveis
     InputHandler inputHandler;
+    PlayerController playerController;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private ParticleSystem smokeEffect;
     [SerializeField] private Transform gunFront;
@@ -18,7 +20,9 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private float currentHeat;
     [SerializeField] private bool canShoot = true;
     [SerializeField] private float cooldownTimer;
+    [SerializeField] private float backwardSpread = 0.3f; //quanto mais para trás, mais espalhado o tiro
     private Coroutine coolingCoroutine;
+    [SerializeField] private RectTransform crosshair;
 
     #endregion
 
@@ -26,7 +30,7 @@ public class WeaponSystem : MonoBehaviour
     {
         //Inicializar o InputHandler
         inputHandler = new InputHandler();
-
+        playerController = GetComponentInParent<PlayerController>();
         #region Segurança para pegar referências se esquecer de arrastar no inspector
         if (gunFront == null)
         {
@@ -67,6 +71,13 @@ public class WeaponSystem : MonoBehaviour
                 cooldownTimer = config.fireRate;
             }
         }
+
+        if (crosshair != null)
+        {
+            float dotProduct = playerController.GetMovementDot();
+            float targetScale = (dotProduct < 0 )? 1.6f : 1f; //Aumenta o tamanho da mira se estiver atirando para trás
+            crosshair.localScale = Vector3.Lerp(crosshair.localScale, Vector3.one * targetScale, Time.deltaTime * 8f);//Lerp para suavizar a transição do tamanho da mira
+        }
     }
 
     void Shoot()
@@ -97,9 +108,19 @@ public class WeaponSystem : MonoBehaviour
         }
 
 #region raycast
-        //retorna um bool
-        bool shot = Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hitInfo, config.maxRange);
 
+        float dotProduct = playerController.GetMovementDot();
+        //bool shot = Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hitInfo, config.maxRange);
+        Vector3 shootDirection = mainCamera.transform.forward; 
+        
+        if (dotProduct < 0) //Atirando e andando para trás
+        {
+            Vector2 randomCircle = Random.insideUnitCircle * backwardSpread; //gira o círculo para espalhar os tiros
+            Vector3 spreadDirection = mainCamera.transform.forward + (mainCamera.transform.right * randomCircle.x) + (mainCamera.transform.up * randomCircle.y); 
+            shootDirection = spreadDirection.normalized; //normaliza para manter a direção, mas com o spread aplicado
+        }
+
+        bool shot = Physics.Raycast(mainCamera.transform.position, shootDirection.normalized, out RaycastHit hitInfo, config.maxRange);
         //Verifica se o objeto atingido é um inimigo e aplica dano
         if (shot && hitInfo.collider.TryGetComponent<BaseEnemy>(out BaseEnemy enemy))
         {
@@ -120,7 +141,6 @@ public class WeaponSystem : MonoBehaviour
         isOverheated = true;
         canShoot = false;
         Acoes.OnOverheat?.Invoke();
-        Debug.Log("Arma superaquecida!");
 
         if (coolingCoroutine != null)
         {
@@ -147,7 +167,6 @@ public class WeaponSystem : MonoBehaviour
         isOverheated = false;
         coolingCoroutine = null;
         canShoot = true;
-        Debug.Log("Arma resfriada, pronta para atirar novamente.");
     }
 
     void SwitchWeapon()
