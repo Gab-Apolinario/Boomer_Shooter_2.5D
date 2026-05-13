@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movimento")]
     [SerializeField] private ParticleSystem corrida;
     [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] public float speedMultiplier = 1f; //multiplicador de velocidade para powerups
     [SerializeField] private float verticalVelocity = -2f; //'gravidade' do jogador
     [SerializeField] private Vector3 horizontalDirection;
 
@@ -68,7 +69,7 @@ public class PlayerController : MonoBehaviour
         horizontalDirection = transform.TransformDirection(horizontalDirection);    //fazer o player sempre para o lado que está olhando
 
         //Garante que a graviade não vai atuar na diagonal
-        Vector3 finalMove = horizontalDirection * moveSpeed + Vector3.up * verticalVelocity + dashVelocity;
+        Vector3 finalMove = horizontalDirection * moveSpeed * speedMultiplier + Vector3.up * verticalVelocity + dashVelocity;
         characterController.Move(finalMove * Time.deltaTime);
         
         //Desacelera o dash ao longo do tempo

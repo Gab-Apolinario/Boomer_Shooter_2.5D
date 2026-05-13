@@ -16,6 +16,8 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private WeaponConfigSO config;
     [SerializeField] private WeaponConfigSO[] weaponConfigs; //array para futuras armas
     [SerializeField] private int currentWeaponIndex = 0;
+    public float damageMultiplier = 1f;
+    public float fireRateMultiplier = 1f;
     [SerializeField] private bool isOverheated;
     [SerializeField] private float currentHeat;
     [SerializeField] private bool canShoot = true;
@@ -44,7 +46,7 @@ public class WeaponSystem : MonoBehaviour
         #endregion
 
         //Iniciação de variáveis
-        cooldownTimer = config.fireRate;
+        cooldownTimer = config.fireRate * fireRateMultiplier;
         currentHeat = 0;
     }
 
@@ -68,7 +70,7 @@ public class WeaponSystem : MonoBehaviour
             if (cooldownTimer <= 0 && !isOverheated) //atingiu o tempo de cooldown e não está carregando
             {
                 canShoot = true;
-                cooldownTimer = config.fireRate;
+                cooldownTimer = config.fireRate * fireRateMultiplier; //reseta o timer de cooldown, aplicando o multiplicador de taxa de fogo
             }
         }
 
@@ -83,7 +85,7 @@ public class WeaponSystem : MonoBehaviour
     void Shoot()
     {
         canShoot = false;
-        cooldownTimer = config.fireRate;
+        cooldownTimer = config.fireRate * fireRateMultiplier;
         currentHeat += config.heatPerShot;
         float heatRatio = currentHeat / config.heatCapacity;
         var emission = smokeEffect.emission;
@@ -125,7 +127,7 @@ public class WeaponSystem : MonoBehaviour
         if (shot && hitInfo.collider.TryGetComponent<BaseEnemy>(out BaseEnemy enemy))
         {
             //Aciona TakeDamage() do BaseEnemy
-            enemy.TakeDamage(config.damage);
+            enemy.TakeDamage(config.damage * damageMultiplier);
         }
 
         if (shot) //se atingiu algo
@@ -178,7 +180,7 @@ public class WeaponSystem : MonoBehaviour
         StopAllCoroutines();
         canShoot = true;
         isOverheated = false;
-        cooldownTimer = config.fireRate;
+        cooldownTimer = config.fireRate * fireRateMultiplier;
         currentHeat = 0;
         Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity); //reset fillAmount barra);
     }

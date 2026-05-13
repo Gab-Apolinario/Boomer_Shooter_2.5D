@@ -5,8 +5,9 @@ public class Player : MonoBehaviour
 {
 
     [Header("VIDA")]
-    [SerializeField] private float health;
+    [SerializeField] public float health;
     [SerializeField] private float MaxHealth;
+    [SerializeField] public float shieldHealth;
     PlayerController playerController;
 
     void Start()
@@ -22,6 +23,15 @@ public class Player : MonoBehaviour
         if (playerController.isInvincible)
         {
             return;
+        }
+        else if (shieldHealth > 0)
+        {
+            shieldHealth -= amount;
+            if (shieldHealth < 0)
+            {
+                health += shieldHealth;
+                shieldHealth = 0;
+            }
         }
         else
         {
@@ -50,5 +60,10 @@ public class Player : MonoBehaviour
         //Se a cura ultrapassar a vida máxima, ajusta para o máximo
         health = Mathf.Min(health + amount, MaxHealth);
         Acoes.OnPlayerHealthChanged?.Invoke(health, MaxHealth);
+    }
+
+    public void ActivateShield(float shieldHealth)
+    {
+        this.shieldHealth = shieldHealth;
     }
 }
