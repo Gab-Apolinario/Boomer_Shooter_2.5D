@@ -49,6 +49,15 @@ public class PlayerController : MonoBehaviour
         Dash();
         Move();
         Rotation();
+
+        if (speedMultiplier > 1f)
+        {
+            corrida.Play();
+        }
+        else
+        {
+            corrida.Stop();
+        }
     }
 
     void Move()

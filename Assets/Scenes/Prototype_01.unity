@@ -4553,6 +4553,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 311556133}
   m_CullTransparentMesh: 1
+--- !u!1 &334644209 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5328255754262571898, guid: fcc77031b306e654da99b4d17196bf33, type: 3}
+  m_PrefabInstance: {fileID: 1854215851}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &335220740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10323,13 +10328,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959011549}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.17, y: -0.15, z: 0.39}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.068696715, y: 0.1732253, z: 0.012113092, w: 0.9824088}
+  m_LocalPosition: {x: -0.4850471, y: 0.18604115, z: -0.16811629}
+  m_LocalScale: {x: 0.83333325, y: 0.8333334, z: 0.83333325}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 592050024}
-  m_Father: {fileID: 1346318713}
+  m_Father: {fileID: 1996196708}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &959011551
 MonoBehaviour:
@@ -10345,9 +10350,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeSystem
   meleeWeapon: {fileID: 259753498}
   meleeDamage: 30
-  meleeCooldown: 1
+  meleeCooldown: 0.8
   meleeRange: 1.5
-  canAttack: 0
+  canAttack: 1
 --- !u!1 &965186381
 GameObject:
   m_ObjectHideFlags: 0
@@ -14870,7 +14875,6 @@ Transform:
   - {fileID: 1688599536}
   - {fileID: 1806868205}
   - {fileID: 1996196708}
-  - {fileID: 959011550}
   m_Father: {fileID: 1769784913}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1346318714
@@ -20895,6 +20899,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5328255754262571898, guid: fcc77031b306e654da99b4d17196bf33, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9200281553347219645, guid: fcc77031b306e654da99b4d17196bf33, type: 3}
       propertyPath: m_Layer
       value: 2
@@ -22507,6 +22515,7 @@ Transform:
   m_Children:
   - {fileID: 1589888137}
   - {fileID: 1090830246}
+  - {fileID: 959011550}
   m_Father: {fileID: 1346318713}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1996196709
@@ -22524,12 +22533,16 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   smokeEffect: {fileID: 270045398}
   gunFront: {fileID: 1589888137}
-  config: {fileID: 11400000, guid: 826b01a7de9d87341833f8e5d06ad9d9, type: 2}
+  config: {fileID: 0}
   weaponConfigs:
-  - {fileID: 11400000, guid: 8ef672e70a1d20f42835bc0def0fcc3d, type: 2}
   - {fileID: 11400000, guid: 826b01a7de9d87341833f8e5d06ad9d9, type: 2}
+  - {fileID: 11400000, guid: 8ef672e70a1d20f42835bc0def0fcc3d, type: 2}
   - {fileID: 11400000, guid: 507525bd324599647bfddad30fb2ac55, type: 2}
+  - {fileID: 11400000, guid: 70f5460f6c0ede143894f3a8762e9652, type: 2}
   currentWeaponIndex: 0
+  isUsingMelee: 0
+  swapCooldown: 0.5
+  crosshair: {fileID: 727763206}
   damageMultiplier: 1
   fireRateMultiplier: 1
   isOverheated: 0
@@ -22537,7 +22550,8 @@ MonoBehaviour:
   canShoot: 1
   cooldownTimer: 0
   backwardSpread: 0.065
-  crosshair: {fileID: 727763206}
+  meleeSystem: {fileID: 959011551}
+  rangedWeaponModel: {fileID: 334644209}
 --- !u!1 &2018032467
 GameObject:
   m_ObjectHideFlags: 0

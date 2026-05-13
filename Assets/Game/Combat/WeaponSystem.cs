@@ -16,6 +16,11 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private WeaponConfigSO config;
     [SerializeField] private WeaponConfigSO[] weaponConfigs; //array para futuras armas
     [SerializeField] private int currentWeaponIndex = 0;
+    [SerializeField] private bool isUsingMelee = false;
+    [SerializeField] private float swapCooldown = 0.5f;
+    [SerializeField] private RectTransform crosshair;
+
+    [Header("Status da Arma")]
     public float damageMultiplier = 1f;
     public float fireRateMultiplier = 1f;
     [SerializeField] private bool isOverheated;
@@ -24,7 +29,11 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private float cooldownTimer;
     [SerializeField] private float backwardSpread = 0.3f; //quanto mais para trás, mais espalhado o tiro
     private Coroutine coolingCoroutine;
-    [SerializeField] private RectTransform crosshair;
+
+    [Header("Melee System")]
+    [SerializeField] private MeleeSystem meleeSystem;
+    [SerializeField] private GameObject rangedWeaponModel;
+    private float lastSwapTime = -999f;
 
     #endregion
 
@@ -33,7 +42,8 @@ public class WeaponSystem : MonoBehaviour
         //Inicializar o InputHandler
         inputHandler = new InputHandler();
         playerController = GetComponentInParent<PlayerController>();
-        #region Segurança para pegar referências se esquecer de arrastar no inspector
+
+        #region SEGURANÇAS
         if (gunFront == null)
         {
             gunFront = transform.Find("Gun_Front");
@@ -43,7 +53,14 @@ public class WeaponSystem : MonoBehaviour
         {
             mainCamera = Camera.main;
         }
+
+        if (meleeSystem == null)
+        {
+            meleeSystem = GetComponentInChildren<MeleeSystem>();
+        }
         #endregion
+
+        config = weaponConfigs[currentWeaponIndex]; //inicia com a primeira arma do array
 
         //Iniciação de variáveis
         cooldownTimer = config.fireRate * fireRateMultiplier;
@@ -57,9 +74,25 @@ public class WeaponSystem : MonoBehaviour
             SwitchWeapon();
         }
 
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            if (Time.time - lastSwapTime >= swapCooldown)
+            {
+                SwapToMelee();
+                lastSwapTime = Time.time;
+            }
+        }
+
         if (canShoot && inputHandler.IsShooting)
         {
-            Shoot();
+            if (isUsingMelee)
+            {
+                MeleeAttack();
+            }
+            else
+            {
+                Shoot();
+            }
         }
 
         //Se atirou, começa cooldown
@@ -82,6 +115,14 @@ public class WeaponSystem : MonoBehaviour
         }
     }
 
+    void MeleeAttack()
+    {
+        if (meleeSystem != null && meleeSystem.TryAttack(damageMultiplier))
+        {
+            canShoot = false;
+            cooldownTimer = meleeSystem.GetAttackDuration();
+        }
+    }
     void Shoot()
     {
         canShoot = false;
@@ -171,9 +212,74 @@ public class WeaponSystem : MonoBehaviour
         canShoot = true;
     }
 
+    void SwapToMelee()
+    {
+        isUsingMelee = !isUsingMelee;
+        if (isUsingMelee)
+        {
+            Debug.Log("MODO MELEE");
+            config = weaponConfigs[weaponConfigs.Length - 1]; //melee = última do array
+
+            if (rangedWeaponModel != null)
+            {
+                rangedWeaponModel.SetActive(false);                
+            }
+            if (crosshair != null)
+            {
+                crosshair.gameObject.SetActive(false);
+            }
+
+            if (meleeSystem != null)
+            {
+                meleeSystem.ShowWeapon();
+            }
+
+            StopAllCoroutines();
+            isOverheated = false;
+            currentHeat = 0;
+            Acoes.OnHeatChanged?.Invoke(0, config.heatCapacity);
+        }
+        else
+        {
+            Debug.Log($"MODO RANGED: {weaponConfigs[currentWeaponIndex].weaponName}");
+            config = weaponConfigs[currentWeaponIndex]; //volta para a arma de distância atual
+
+            if (rangedWeaponModel != null)
+            {
+                rangedWeaponModel.SetActive(true);                
+            }
+            if (crosshair != null)
+            {
+                crosshair.gameObject.SetActive(true);
+            }
+
+            if (meleeSystem != null)
+            {
+                meleeSystem.HideWeapon();
+            }
+
+            canShoot = true;
+            cooldownTimer = config.fireRate * fireRateMultiplier;
+        }
+    }
+
     void SwitchWeapon()
     {
-        currentWeaponIndex = (currentWeaponIndex + 1) % weaponConfigs.Length; //avança para o próximo indice, mas volta para 0 se ultrapassar o tamanho do array (%)
+        if (isUsingMelee)
+        {
+            isUsingMelee = false;
+
+            if (rangedWeaponModel != null)
+            {
+                rangedWeaponModel.SetActive(true);                
+            }
+            if (crosshair != null)
+            {
+                crosshair.gameObject.SetActive(true);
+            }
+        }
+
+        currentWeaponIndex = (currentWeaponIndex + 1) % (weaponConfigs.Length -1); //avança para o próximo indice, mas volta para 0 se ultrapassar o tamanho do array (%)
         config = weaponConfigs[currentWeaponIndex]; //Substitui SO atual pela nova configuração
         Debug.Log($"Arma trocada para: {config.weaponName}");
 

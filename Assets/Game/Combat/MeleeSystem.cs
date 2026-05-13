@@ -1,10 +1,10 @@
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 public class MeleeSystem : MonoBehaviour
 {
-    InputHandler inputHandler;
     [SerializeField] private GameObject meleeWeapon;
     [SerializeField] private float meleeDamage;
     [SerializeField] private float meleeCooldown;
@@ -17,34 +17,52 @@ public class MeleeSystem : MonoBehaviour
         {
             meleeWeapon = transform.Find("MeleeWeapon").gameObject;
         }
+
         meleeWeapon.SetActive(false);
-        inputHandler = new InputHandler();
         canAttack = true;
     }
 
-    void Update()
+    public void ShowWeapon()
     {
-        if (inputHandler.IsMeleeAttacking && canAttack)
+        if (meleeWeapon != null)
         {
-            StartCoroutine(MeleeAttack());
+            meleeWeapon.SetActive(true);
+            meleeWeapon.transform.localRotation = Quaternion.Euler(-20f, 105f, -15f);
         }
     }
 
-    IEnumerator MeleeAttack()
+    public void HideWeapon()
+    {
+        if (meleeWeapon != null)
+        {
+            meleeWeapon.SetActive(false);
+        }
+    }
+    public bool TryAttack(float damageMultiplier)
+    {
+        if (!canAttack)
+        {
+            return false;
+        }
+
+        StartCoroutine(MeleeAttack(damageMultiplier));
+        return true;
+    }
+
+    IEnumerator MeleeAttack(float damageMultiplier)
     {
         canAttack = false;
-        meleeWeapon.SetActive(true);
 
         //Animação Slash
         float time = 0;
-        while (time < 0.3f)
+        while (time < 0.4f)
         {
             time += Time.deltaTime;
-            meleeWeapon.transform.localRotation = Quaternion.Lerp(Quaternion.Euler(-20f, 105f, -15f), Quaternion.Euler(-30f, 97f, 77f), time/0.3f);
+            meleeWeapon.transform.localRotation = Quaternion.Lerp(Quaternion.Euler(-20f, 105f, -15f), Quaternion.Euler(-30f, 97f, 77f), time/0.4f);
             yield return null;
         }
         
-        meleeWeapon.SetActive(false);
+        meleeWeapon.transform.localRotation = Quaternion.Euler(-20f, 105f, -15f);
 
         //verificar colision com EnemyBase
         Collider[] hits = Physics.OverlapSphere(transform.position, meleeRange);
@@ -54,7 +72,7 @@ public class MeleeSystem : MonoBehaviour
             if (hits[i].TryGetComponent<BaseEnemy>(out BaseEnemy enemy))
             {
                 //Aciona TakeDamage() do BaseEnemy
-                enemy.TakeDamage(meleeDamage);
+                enemy.TakeDamage(meleeDamage * damageMultiplier);
             }
         }
         
@@ -62,6 +80,13 @@ public class MeleeSystem : MonoBehaviour
         yield return new WaitForSeconds(meleeCooldown);
         canAttack = true;
     }
+
+    public float GetAttackDuration()
+    {
+        return 0.4f + meleeCooldown;
+    }
+
+    public bool CanAttack => canAttack;
 
     private void OnDrawGizmosSelected()
     {

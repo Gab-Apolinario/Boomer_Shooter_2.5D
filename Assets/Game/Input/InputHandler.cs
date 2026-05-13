@@ -43,15 +43,9 @@ public class InputHandler
         get { return inputActions.Player.Look.ReadValue<Vector2>(); }
     }
 
-    
     public bool IsShooting
     {
         get { return inputActions.Player.Shoot.ReadValue<float>() > 0.5f; }
-    }
-
-    public bool IsMeleeAttacking
-    {
-        get { return inputActions.Player.MeleeAtack.ReadValue<float>() > 0.5f; }
     }
 
     public bool IsDashing
