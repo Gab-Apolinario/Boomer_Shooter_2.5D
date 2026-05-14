@@ -5,13 +5,13 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource jumpSource;
+    [SerializeField] private AudioSource meleeSource;
     [SerializeField] private AudioSource shootSource;
     [SerializeField] private AudioSource overheatSource;
     [SerializeField] private AudioSource healthPickupSource;
 
     [Header("Clips")]
-    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private AudioClip meleeClip;
     [SerializeField] private AudioClip shootClip;
     [SerializeField] private AudioClip overheatClip;
     [SerializeField] private AudioClip healthPickupClip;
@@ -29,6 +29,7 @@ public class AudioManager : MonoBehaviour
 
     private void OnEnable()
     {
+        Acoes.OnMeleeAttack += PlayMelee;
         Acoes.PlayerAtirou += PlayShoot;
         Acoes.OnOverheat += PlayOverheat;
         Acoes.OnHealthPickup += PlayHealthPickup;
@@ -36,14 +37,15 @@ public class AudioManager : MonoBehaviour
 
     private void OnDisable()
     {
+        Acoes.OnMeleeAttack -= PlayMelee;
         Acoes.PlayerAtirou -= PlayShoot;
         Acoes.OnOverheat -= PlayOverheat;
         Acoes.OnHealthPickup -= PlayHealthPickup;
     }
 
-    private void PlayJump()
+    private void PlayMelee()
     {
-        jumpSource.PlayOneShot(jumpClip);
+        meleeSource.PlayOneShot(meleeClip);
     }
 
     private void PlayShoot()

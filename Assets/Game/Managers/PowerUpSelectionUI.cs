@@ -7,6 +7,7 @@ public class PowerUpSelectionUI : MonoBehaviour
 {
     [SerializeField] GameObject powerUpPanel;
     [SerializeField] Button[] powerUpButtons;
+    [SerializeField] TextMeshProUGUI[] powerUpDescriptions;
     [SerializeField] Image[] powerUpIcons;
     [SerializeField] PowerUpsSO[] availablePowerUps;
 
@@ -35,7 +36,7 @@ public class PowerUpSelectionUI : MonoBehaviour
 
             buttonText.text = selectedPowerUps[i].powerUpName;
             powerUpIcons[i].sprite = selectedPowerUps[i].icon;
-
+            powerUpDescriptions[i].text = selectedPowerUps[i].description;
             powerUpButtons[i].onClick.RemoveAllListeners();
             powerUpButtons[i].onClick.AddListener(() => OnPowerUpSelected(selectedPowerUps[index]));
         }
