@@ -154,23 +154,17 @@ MonoBehaviour:
   currentState: 0
   originalColor: {r: 0, g: 0, b: 0, a: 0}
   meshRenderer: {fileID: 7051640245388966595}
-  health: 40
-  sprintSpeed: 10
-  damage: 15
-  score: 0
+  enemyData: {fileID: 11400000, guid: 27e781e5c074a8f4bb993b4a34ceb942, type: 2}
+  currentHealth: 0
   navAgent: {fileID: 5730550862896000372}
   player: {fileID: 0}
-  detectionRange: 40
   randomDestination: {x: 0, y: 0, z: 0}
   isUpdatingDestination: 0
-  attackingRange: 25
   offSetRadius: 18
-  fieldOfView: 110
   playerDetected: 0
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
-  shotCooldown: 0.7
 --- !u!120 &7600925249756232616
 LineRenderer:
   serializedVersion: 3

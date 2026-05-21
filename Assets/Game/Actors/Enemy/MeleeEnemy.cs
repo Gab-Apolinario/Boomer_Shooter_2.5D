@@ -2,18 +2,25 @@ using UnityEngine;
 
 public class MeleeEnemy : BaseEnemy
 {
-    [SerializeField] protected float attackCooldown;
+    private MeleeEnemyDataSO meleeData;
+    private Player playerScript;
     [SerializeField] protected float attackCooldownTimer;
     [SerializeField] protected bool canAttack = true;
-    private Player playerScript;
 
     public override void Start()
     {
         base.Start();
-        attackCooldownTimer = attackCooldown;
-        playerScript = player.GetComponent<Player>();
 
-        score = 10;
+        meleeData = enemyData as MeleeEnemyDataSO;
+
+        if (meleeData == null)
+        {
+            Debug.LogError($"[{gameObject.name}] O ScriptableObject atribuído precisa ser do tipo MeleeEnemyDataSO, mas é {enemyData.GetType().Name}!");
+            return;
+        }
+
+        attackCooldownTimer = meleeData.attackCooldown;
+        playerScript = player.GetComponent<Player>();
     }
 
     public override void Update()
@@ -26,7 +33,7 @@ public class MeleeEnemy : BaseEnemy
             if (attackCooldownTimer <= 0f)
             {
                 canAttack = true;
-                attackCooldownTimer = attackCooldown;
+                attackCooldownTimer = meleeData.attackCooldown;
             }
         }
     }
@@ -47,6 +54,6 @@ public class MeleeEnemy : BaseEnemy
     void Attack()
     {
         canAttack = false;
-        playerScript.TakeDamage(damage);
+        playerScript.TakeDamage(meleeData.damage);
     }
 }

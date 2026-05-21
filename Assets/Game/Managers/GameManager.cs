@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    #region ID
+    #region VARIÁVEIS
     private enum GameState
     {
         Playing,
@@ -11,6 +12,10 @@ public class GameManager : MonoBehaviour
         Victory,
         TimeOver
     }
+
+    [SerializeField] private ControlPoint[] controlPoint;
+    private Queue<ControlPoint> captureQueue = new Queue<ControlPoint>();
+    
 
     [SerializeField] private GameState currentState;
     [SerializeField] private UIManager UIManager;
@@ -24,21 +29,26 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    #region AÇÕES
     private void OnEnable()
     {
         Acoes.OnEnemyDie += IncreaseScore;
         Acoes.OnPlayerDeath += HandleGameOver;
-        Acoes.OnLastWaveFinished += HandleVictory;
         Acoes.OnWaveSpawn += StartTimer;
+        Acoes.OnPointCotrolled += CheckVictory;
+        Acoes.OnPointReset += HandlePointReset;
     }
 
     private void OnDisable()
     {
         Acoes.OnEnemyDie -= IncreaseScore;
         Acoes.OnPlayerDeath -= HandleGameOver;
-        Acoes.OnLastWaveFinished -= HandleVictory;
         Acoes.OnWaveSpawn -= StartTimer;
+        Acoes.OnPointCotrolled -= CheckVictory;
+        Acoes.OnPointReset -= HandlePointReset;
     }
+    #endregion
+
 
     private void Awake()
     {
@@ -60,6 +70,14 @@ public class GameManager : MonoBehaviour
         scorePerSeconds = 10;
         timePlayed = 0;
         timeLimit = 240f; //4 minutos
+
+        ShuffleControlPoints();
+        foreach (var point in controlPoint)
+        {
+            captureQueue.Enqueue(point);
+        }
+
+        captureQueue.Peek().EnableBeam();
     }
 
     private void Update()
@@ -103,7 +121,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void IncreaseScore(int amount)
+    public void IncreaseScore(int amount)
     {
         if (currentState != GameState.Playing)
         {
@@ -157,5 +175,58 @@ public class GameManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1;
         UIManager.HidePause();
+    }
+
+    void ShuffleControlPoints()
+    {
+        //"Começo no primeiro elemento, enquanto i for menor que a quantidade de pontos, acrescenta i a cada iteração"
+        for (int i = 0; i < controlPoint.Length; i++)
+        {
+            int randomIndex = Random.Range(i, controlPoint.Length);
+
+            var temp = controlPoint[i];
+            controlPoint[i] = controlPoint[randomIndex];
+            controlPoint[randomIndex] = temp;
+        }
+    }
+
+    void CheckVictory()
+    {
+        /* "Para cada ponto de controle no array, verifique se está controlado. Se encontrar qualquer um que NÃO esteja, saia.
+        Se passar por todos sem encontrar nenhum não-controlado, é vitória." */
+        bool allControlled = true;
+
+        foreach (ControlPoint point in controlPoint)
+        {
+            if (!point.IsControlled)
+            {
+                allControlled = false;
+                break;
+            }
+        }
+        
+
+        if (allControlled)
+        {
+            HandleVictory();
+            return;
+        }
+        
+        captureQueue.Dequeue();
+        if (captureQueue.Count > 0)
+        {
+            captureQueue.Peek().EnableBeam();
+        }
+
+        Acoes.OnPointCotrolledWithReward?.Invoke();
+    }
+
+    void HandlePointReset(ControlPoint point)
+    {
+        captureQueue.Enqueue(point);
+        if(captureQueue.Count == 1)
+        {
+            captureQueue.Peek().EnableBeam();
+        }
     }
 }

@@ -30,6 +30,8 @@ public static class Acoes
     //POWERUPS
     public static Action<PowerUpsSO> OnPowerUpSelected;
     public static Action OnPointCotrolled;
+    public static Action OnPointCotrolledWithReward;
+    public static Action<ControlPoint> OnPointReset;
 
     //PARTICULAS
     public static Action PlayerAtirou; //MUZZLE FLASH

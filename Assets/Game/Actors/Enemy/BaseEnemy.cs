@@ -17,29 +17,28 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected Color originalColor;
     [SerializeField] protected MeshRenderer meshRenderer;
 
-    [SerializeField] protected float health;
+    [SerializeField] protected EnemyDataSO enemyData;
+
+    [SerializeField] protected float currentHealth;
     //[SerializeField] protected float moveSpeed;
-    [SerializeField] protected float sprintSpeed;
-    [SerializeField] protected float damage;
-    [SerializeField] protected int score;
     [SerializeField] protected NavMeshAgent navAgent;
     [SerializeField] protected Transform player;
-    [SerializeField] protected float detectionRange;
     protected float flanckAngle;
     [SerializeField] protected Vector3 randomDestination;
     [SerializeField] protected bool isUpdatingDestination;
-    [SerializeField] protected float attackingRange;
     [SerializeField] protected float offSetRadius;
-    [SerializeField] protected float fieldOfView;
     [SerializeField] protected bool playerDetected;
     protected bool collisionDetected;
     protected RaycastHit hitInfo;
+    protected float currentSprintSpeed;
 
     #endregion
 
     public virtual void Start()
     {
-        sprintSpeed += Random.Range(-0.5f, 1f);
+        currentHealth = enemyData.maxHealth;
+        currentSprintSpeed = enemyData.sprintSpeed + Random.Range(-0.5f, 0.8f);
+
         flanckAngle = Random.Range(0f, 360f);
         meshRenderer = GetComponent<MeshRenderer>();
         originalColor = meshRenderer.material.color;
@@ -54,7 +53,7 @@ public class BaseEnemy : MonoBehaviour
             navAgent = GetComponent<NavMeshAgent>();
         }
 
-        navAgent.stoppingDistance = attackingRange;
+        navAgent.stoppingDistance = enemyData.attackRange;
 
         ChasingFromStart();
     }
@@ -71,7 +70,7 @@ public class BaseEnemy : MonoBehaviour
         if (currentState == EnemyState.Chasing)
         {
             navAgent.SetDestination(randomDestination);
-            navAgent.speed = sprintSpeed;
+            navAgent.speed = currentSprintSpeed;
         }
     }
 
@@ -96,9 +95,9 @@ public class BaseEnemy : MonoBehaviour
         playerDetected = true;
         currentState = EnemyState.Chasing;
 
-        health -= amount;
+        currentHealth -= amount;
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             Die();
         }
@@ -117,7 +116,7 @@ public class BaseEnemy : MonoBehaviour
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, directionToPlayer);
 
-        collisionDetected = Physics.Raycast(transform.position, directionToPlayer, out hitInfo, detectionRange);
+        collisionDetected = Physics.Raycast(transform.position, directionToPlayer, out hitInfo, enemyData.detectionRange);
 
         if (collisionDetected && hitInfo.collider.CompareTag("Player"))
         {
@@ -125,7 +124,7 @@ public class BaseEnemy : MonoBehaviour
         }
 
         //Se o player estiver dentro do campo de visão e alcance de ataque, ataca
-        if (playerDetected && angle <= fieldOfView / 2 && distance <= attackingRange)
+        if (playerDetected && angle <= enemyData.fieldOfView / 2 && distance <= enemyData.attackRange)
         {
             currentState = EnemyState.Attacking;
             navAgent.updateRotation = false;
@@ -153,7 +152,7 @@ public class BaseEnemy : MonoBehaviour
     public virtual void Die()
     {
         Destroy(gameObject);
-        Acoes.OnEnemyDie?.Invoke(score);
+        Acoes.OnEnemyDie?.Invoke(enemyData.score);
     }
 
     protected virtual void ChasingFromStart()
@@ -165,12 +164,14 @@ public class BaseEnemy : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
-        Vector3 leftDir = Quaternion.Euler(0, -fieldOfView / 2, 0) * transform.forward;
-        Vector3 rightDir = Quaternion.Euler(0, fieldOfView / 2, 0) * transform.forward;
+        if (enemyData == null) return; //proteção
 
-        Gizmos.DrawRay(transform.position, leftDir * detectionRange);
-        Gizmos.DrawRay(transform.position, rightDir * detectionRange);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, enemyData.detectionRange);
+        Vector3 leftDir = Quaternion.Euler(0, -enemyData.fieldOfView / 2, 0) * transform.forward;
+        Vector3 rightDir = Quaternion.Euler(0, enemyData.fieldOfView / 2, 0) * transform.forward;
+
+        Gizmos.DrawRay(transform.position, leftDir * enemyData.detectionRange);
+        Gizmos.DrawRay(transform.position, rightDir * enemyData.detectionRange);
     }
 }

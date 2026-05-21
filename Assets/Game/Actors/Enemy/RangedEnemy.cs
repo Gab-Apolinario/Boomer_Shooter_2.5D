@@ -3,19 +3,27 @@ using System.Collections;
 
 public class RangedEnemy : BaseEnemy
 {
+    private RangedEnemyDataSO rangedData;
+
     protected ParticleSystem muzzleFlashInimigo;
     protected LineRenderer lineRenderer;
     protected Transform gunFront;
     [SerializeField] protected LayerMask wallLayer;
     protected Player playerScript;
-
-    [SerializeField] protected float shotCooldown;
     protected float cooldownTimer;
     protected bool canShoot;
 
     public override void Start()
     {
         base.Start();
+        
+        rangedData = enemyData as RangedEnemyDataSO;
+
+        if (rangedData == null)
+        {
+            Debug.LogError($"[{gameObject.name}] O ScriptableObject atribuído precisa ser do tipo RangedEnemyDataSO, mas é {enemyData.GetType().Name}!");
+            return;
+        }
 
         if (lineRenderer == null)
         {
@@ -33,11 +41,9 @@ public class RangedEnemy : BaseEnemy
         playerScript = player.GetComponent<Player>();
 
         canShoot = true;
-        cooldownTimer = shotCooldown;
+        cooldownTimer = rangedData.shotCooldown;
 
-        score = 15;
-
-        navAgent.stoppingDistance = attackingRange - 1f;
+        navAgent.stoppingDistance = rangedData.attackRange - 1f;
         lineRenderer.enabled = false;
     }
 
@@ -57,7 +63,7 @@ public class RangedEnemy : BaseEnemy
             if (cooldownTimer <= 0)
             {
                 canShoot = true;
-                cooldownTimer = shotCooldown;
+                cooldownTimer = rangedData.shotCooldown;
             }
         }
     }
@@ -71,12 +77,12 @@ public class RangedEnemy : BaseEnemy
 
         Vector3 directionToPlayer = (player.position - transform.position).normalized + shotSpread;
         
-        bool shotFired = Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hitInfo, detectionRange, ~wallLayer);
+        bool shotFired = Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hitInfo, rangedData.detectionRange, ~wallLayer);
         Vector3 laserDestination;
 
         if (shotFired && hitInfo.collider.CompareTag("Player"))
         {
-            playerScript.TakeDamage(damage);
+            playerScript.TakeDamage(rangedData.damage);
             laserDestination = hitInfo.point;
             StartCoroutine(ShowLaser(laserDestination));
         }
@@ -87,7 +93,7 @@ public class RangedEnemy : BaseEnemy
         }
 
         canShoot = false;
-        cooldownTimer = shotCooldown;
+        cooldownTimer = rangedData.shotCooldown;
     }
 
     IEnumerator ShowLaser(Vector3 laserDestination)

@@ -13,12 +13,12 @@ public class PowerUpSelectionUI : MonoBehaviour
 
     void OnEnable()
     {
-        Acoes.OnPointCotrolled += ShowPowerUpSelection;
+        Acoes.OnPointCotrolledWithReward += ShowPowerUpSelection;
     }
 
     void OnDisable()
     {
-        Acoes.OnPointCotrolled -= ShowPowerUpSelection;
+        Acoes.OnPointCotrolledWithReward -= ShowPowerUpSelection;
     }
 
     void Start()
