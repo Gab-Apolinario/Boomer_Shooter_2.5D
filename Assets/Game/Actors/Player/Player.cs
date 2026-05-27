@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] public float health;
     [SerializeField] private float MaxHealth;
     [SerializeField] public float shieldHealth;
+    private float maxShieldHealth = 100f;
     PlayerController playerController;
 
     void Start()
@@ -32,6 +33,7 @@ public class Player : MonoBehaviour
                 health += shieldHealth;
                 shieldHealth = 0;
             }
+            Acoes.OnShieldChanged?.Invoke(shieldHealth, maxShieldHealth);
         }
         else
         {
@@ -62,8 +64,9 @@ public class Player : MonoBehaviour
         Acoes.OnPlayerHealthChanged?.Invoke(health, MaxHealth);
     }
 
-    public void ActivateShield(float shieldHealth)
+    public void ActivateShield(float amount)
     {
-        this.shieldHealth = shieldHealth;
+        shieldHealth = Mathf.Min(shieldHealth + amount, maxShieldHealth);
+        Acoes.OnShieldChanged?.Invoke(shieldHealth, maxShieldHealth);
     }
 }

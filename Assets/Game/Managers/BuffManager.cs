@@ -32,6 +32,7 @@ public class BuffManager : MonoBehaviour
             case PowerUpsSO.PowerUpType.Health:
                 Debug.Log($"Health ANTES: {player.health}");
                 player.Heal(buff.powerUpValue);
+                Acoes.OnHealthPickup?.Invoke();
                 Debug.Log($"Health DEPOIS: {player.health}");
                 break;
             case PowerUpsSO.PowerUpType.Damage:

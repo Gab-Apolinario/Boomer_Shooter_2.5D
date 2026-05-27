@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyDataSO
   enemyName: Melee_Default
   maxHealth: 30
-  damage: 5
-  moveSpeed: 8
-  sprintSpeed: 10
+  damage: 3.5
+  moveSpeed: 6.5
+  sprintSpeed: 7.5
   detectionRange: 50
   attackRange: 1.5
   fieldOfView: 110
   score: 10
-  attackCooldown: 1
+  attackCooldown: 1.2

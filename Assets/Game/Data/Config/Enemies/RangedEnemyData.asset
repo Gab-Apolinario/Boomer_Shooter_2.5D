@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: RangedEnemyData
   m_EditorClassIdentifier: Assembly-CSharp::RangedEnemyDataSO
   enemyName: Ranged_Default
-  maxHealth: 40
-  damage: 15
-  moveSpeed: 8
-  sprintSpeed: 10
-  detectionRange: 30
-  attackRange: 20
+  maxHealth: 20
+  damage: 7
+  moveSpeed: 7
+  sprintSpeed: 7.5
+  detectionRange: 15
+  attackRange: 15
   fieldOfView: 110
   score: 15
-  shotCooldown: 1.6
+  shotCooldown: 2

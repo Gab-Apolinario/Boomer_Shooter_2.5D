@@ -1,5 +1,5 @@
 using TMPro;
-using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,12 +39,15 @@ public class PowerUpSelectionUI : MonoBehaviour
             powerUpDescriptions[i].text = selectedPowerUps[i].description;
             powerUpButtons[i].onClick.RemoveAllListeners();
             powerUpButtons[i].onClick.AddListener(() => OnPowerUpSelected(selectedPowerUps[index]));
+            powerUpButtons[i].interactable = false;
         }
 
         powerUpPanel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Time.timeScale = 0f; //PAUSA O JOGO
+
+        StartCoroutine(EnableButtonsAfterDelay());
     }
 
     public void OnPowerUpSelected(PowerUpsSO selectedPowerUp)
@@ -74,5 +77,14 @@ public class PowerUpSelectionUI : MonoBehaviour
         }
 
         return result;
+    }
+
+    IEnumerator EnableButtonsAfterDelay()
+    {
+        yield return new WaitForSecondsRealtime(0.7f);
+        foreach (Button button in powerUpButtons)
+        {
+            button.interactable = true;
+        }
     }
 }

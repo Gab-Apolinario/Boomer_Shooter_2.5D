@@ -75,7 +75,7 @@ public class RangedEnemy : BaseEnemy
         muzzleFlashInimigo.Play();
         Vector3 shotSpread = new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
 
-        Vector3 directionToPlayer = (player.position - transform.position).normalized + shotSpread;
+        Vector3 directionToPlayer = ((player.position - transform.position) + shotSpread).normalized;
         
         bool shotFired = Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hitInfo, rangedData.detectionRange, ~wallLayer);
         Vector3 laserDestination;
@@ -112,10 +112,5 @@ public class RangedEnemy : BaseEnemy
     public override void DetectPlayer()
     {
         base.DetectPlayer();
-
-        if (collisionDetected && !hitInfo.collider.CompareTag("Player"))
-        {
-            canShoot = false;
-        }
-}
+    }
 }

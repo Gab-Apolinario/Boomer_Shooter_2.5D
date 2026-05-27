@@ -16,5 +16,5 @@ MonoBehaviour:
   powerUpType: 4
   powerUpValue: 0.5
   duration: 8
-  description: "Aumenta a cad\xEAncia da arma em 100%"
+  description: "Aumenta a cad\xEAncia da arma em 100% por 8 segundos"
   icon: {fileID: 0}

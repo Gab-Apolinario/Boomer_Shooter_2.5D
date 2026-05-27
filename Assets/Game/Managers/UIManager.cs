@@ -13,8 +13,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waveAnnouncementText;
     [SerializeField] private Image heatBar;
     [SerializeField] private Gradient heatGradient;
-    [Header("Modais")]
+    [SerializeField] private GameObject shieldContainer;
+    [SerializeField] private Image shieldFill;
     
+    [Header("Modais")]
     [SerializeField] private GameObject gameOverModal;
     [SerializeField] private TextMeshProUGUI gameOverScoreText;
     [SerializeField] private GameObject victoryModal;
@@ -44,6 +46,7 @@ public class UIManager : MonoBehaviour
         Acoes.ResolveTime += leaderboardManager.SetPendingTime;
         Acoes.OnWaveSpawn += OnWaveSpawn;
         Acoes.OnTimeBetweenWaves += OnTimeBetweenWaves;
+        Acoes.OnShieldChanged += UpdateShieldUI;
     }
 
     private void OnDisable()
@@ -57,6 +60,7 @@ public class UIManager : MonoBehaviour
         Acoes.ResolveTime -= leaderboardManager.SetPendingTime;
         Acoes.OnWaveSpawn -= OnWaveSpawn;
         Acoes.OnTimeBetweenWaves -= OnTimeBetweenWaves;
+        Acoes.OnShieldChanged -= UpdateShieldUI;
     }
     #endregion
 
@@ -73,6 +77,8 @@ public class UIManager : MonoBehaviour
         pauseModal.SetActive(false);
         healthBar.fillAmount = 1f;
         heatBar.fillAmount = 0f;
+        shieldFill.fillAmount = 0f;
+        shieldContainer.SetActive(false);
     }
 
     public void UpdateTimer(float timeRemaining)
@@ -107,6 +113,12 @@ public class UIManager : MonoBehaviour
         leaderboardManager.SetPendingScore(score);
     }
 
+    private void UpdateShieldUI(float current, float max)
+    {
+        shieldContainer.SetActive(current > 0);
+        shieldFill.fillAmount = current / max;
+    }
+    
     private void OnWaveSpawn(int waveIndex)
     {
         StartCoroutine(WaveSpawn(waveIndex));

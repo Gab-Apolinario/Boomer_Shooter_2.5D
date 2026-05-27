@@ -2252,7 +2252,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1280218885
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2534,19 +2534,15 @@ MonoBehaviour:
   m_text: '<sprite name="w"> <sprite name="a"> <sprite name="s"> <sprite name="d"> 
     Movimentar
 
-    <sprite name="shift">  Correr
+    <sprite name="e">  Troca para melee
 
-    <sprite name="space">  Pular
+    <sprite name="ml"> 
+    Atirar / Ataque melee
 
-    <sprite
-    name="c">  Melee
+    <sprite name="shift">  Dash
 
-    <sprite name="ml">  Atirar
-
-    <sprite name="mr">  Dash
-
-    <sprite
-    name="mouse">  Olhar
+    <sprite name="mouse"> 
+    Olhar
 
     <sprite name="esc">  Sair'
   m_isRightToLeft: 0

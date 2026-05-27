@@ -3,8 +3,13 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
     private InputHandler inputHandler;
-    
+    public static Camera Instance { get; private set; }
     private float totalRotationAngle = 0f;
+
+    private void Awake()
+    {
+        Instance = GetComponent<Camera>();
+    }
 
     private void Start()
     {

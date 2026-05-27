@@ -10,9 +10,12 @@ public class PlayerController : MonoBehaviour
     [Header("Movimento")]
     [SerializeField] private ParticleSystem corrida;
     [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] public float speedMultiplier = 1f; //multiplicador de velocidade para powerups
-    [SerializeField] private float verticalVelocity = -2f; //'gravidade' do jogador
-    [SerializeField] private Vector3 horizontalDirection;
+    public float speedMultiplier = 1f; //multiplicador de velocidade para powerups
+    private Vector3 horizontalDirection;
+
+    [Header("Jump")]
+    [SerializeField] private float jumpForce;
+    private float verticalVelocity = -2f; //'gravidade' do jogador
 
     [Header("Dash")]
     [SerializeField] private float dashSpeed = 20f;
@@ -21,7 +24,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float invencibilityDuration;
     [SerializeField] private float dashCooldown = 2f;
     [SerializeField] private float dashDeceleration = 5f;
-    [SerializeField] private Vector3 dashVelocity;
+    private Vector3 dashVelocity;
     #endregion
 
     //Awake() roda antes do Start(), bom para inniciar variáveis que outros scripts possam precisar no Start()
@@ -46,6 +49,7 @@ public class PlayerController : MonoBehaviour
         inputHandler.UpdateActiveDevice();
         GetMovementDot();
 
+        Jump();
         Dash();
         Move();
         Rotation();
@@ -65,14 +69,14 @@ public class PlayerController : MonoBehaviour
         //Se não está no chão, aplica a gravidade
         if (!characterController.isGrounded)
         {
-            verticalVelocity += Physics.gravity.y * Time.deltaTime; //cresce a cada frame
+            verticalVelocity += Physics.gravity.y * 2f * Time.deltaTime; //cresce a cada frame
         }
         else if (verticalVelocity < 0)  //se está no chão e ainda tem velocidade negativa, reseta para um valor pequeno
         {
             verticalVelocity = -2f;     //pequena força para manter o jogador no chão
         }
         
-        verticalVelocity = Mathf.Max(verticalVelocity, -20f);   //limita a velocidade de queda
+        verticalVelocity = Mathf.Max(verticalVelocity, -30f);   //limita a velocidade de queda
 
         horizontalDirection = new Vector3(inputHandler.MoveInput.x, 0, inputHandler.MoveInput.y);
         horizontalDirection = transform.TransformDirection(horizontalDirection);    //fazer o player sempre para o lado que está olhando
@@ -85,6 +89,14 @@ public class PlayerController : MonoBehaviour
         dashVelocity = Vector3.Lerp(dashVelocity, Vector3.zero, dashDeceleration * Time.deltaTime);
     }
 
+    void Jump()
+    {
+        if (inputHandler.JumpInput && characterController.isGrounded)
+        {
+            verticalVelocity = jumpForce;
+        }
+    }
+    
     void Rotation()
     {
         //Operador ternário. Se o input for o gamepad, usa a sensibilidade do gamepad, senão usa a sensibilidade do mouse

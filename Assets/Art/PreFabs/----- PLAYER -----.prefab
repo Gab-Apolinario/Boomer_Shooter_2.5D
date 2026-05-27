@@ -66,7 +66,7 @@ MonoBehaviour:
   currentHeat: 0
   canShoot: 1
   cooldownTimer: 0
-  backwardSpread: 0.065
+  backwardSpread: 0.04
   meleeSystem: {fileID: 1737023393930797281}
   rangedWeaponModel: {fileID: 6180251737914449307}
 --- !u!1 &921117536660475217
@@ -102,7 +102,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7491068252795914685}
   - {fileID: 3307896024201974708}
   m_Father: {fileID: 1210295136302274648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -145,15 +144,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   characterController: {fileID: 1735565894596676842}
   corrida: {fileID: 900190574979597735}
-  moveSpeed: 10
+  moveSpeed: 9
   speedMultiplier: 1
-  verticalVelocity: -2
+  verticalVelocity: -3.5
   horizontalDirection: {x: 0, y: 0, z: 0}
   dashSpeed: 22
   canDash: 1
   isInvincible: 0
   invencibilityDuration: 0.2
-  dashCooldown: 1.5
+  dashCooldown: 1.3
   dashDeceleration: 5
   dashVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &3312515887793255023
@@ -168,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e93107a487f3c39419ceb6f85510e683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  health: 50
+  health: 100
   MaxHealth: 100
   shieldHealth: 0
 --- !u!114 &2280989533142917341
@@ -250,6 +249,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7491068252795914685}
   - {fileID: 25798775837350901}
   - {fileID: 1134681016179047353}
   - {fileID: 756533682629309383}
@@ -920,7 +920,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 4587617433332666058}
+    m_TransformParent: {fileID: 3307896024201974708}
     m_Modifications:
     - target: {fileID: 3065742175820703605, guid: 331c978ab8fe80542ab07021cc7e11c5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -928,11 +928,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3065742175820703605, guid: 331c978ab8fe80542ab07021cc7e11c5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3065742175820703605, guid: 331c978ab8fe80542ab07021cc7e11c5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.2
+      value: 1.2000008
       objectReference: {fileID: 0}
     - target: {fileID: 3065742175820703605, guid: 331c978ab8fe80542ab07021cc7e11c5, type: 3}
       propertyPath: m_LocalRotation.w

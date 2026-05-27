@@ -81,7 +81,16 @@ public class BaseEnemy : MonoBehaviour
         while (currentState == EnemyState.Chasing)
         {
             Vector3 offSet = Quaternion.Euler(0, flanckAngle, 0) * Vector3.forward * offSetRadius;
-            randomDestination = player.position + offSet;
+            Vector3 candidateDestination = player.position + offSet;
+
+            if (NavMesh.SamplePosition(candidateDestination, out NavMeshHit navHit, 2f, NavMesh.AllAreas))
+            {
+                randomDestination = navHit.position;
+            }
+            else
+            {
+                randomDestination = player.position;
+            }
             yield return new WaitForSeconds(0.5f);
         }
 

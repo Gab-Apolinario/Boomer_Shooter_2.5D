@@ -72,12 +72,13 @@ public class GameManager : MonoBehaviour
         timeLimit = 240f; //4 minutos
 
         ShuffleControlPoints();
+        Acoes.OnControlPointsOrdered?.Invoke(controlPoint); //avisa a UI da ordem dos pontos
         foreach (var point in controlPoint)
         {
             captureQueue.Enqueue(point);
         }
 
-        captureQueue.Peek().EnableBeam();
+        ActivateNextPoint(captureQueue.Peek());
     }
 
     private void Update()
@@ -114,7 +115,6 @@ public class GameManager : MonoBehaviour
             UIManager.UpdateTimer(timeLimit);
         }
         
-
         if (currentState == GameState.Playing && timeLimit <= 0)
         {
             TimeOver();
@@ -215,7 +215,7 @@ public class GameManager : MonoBehaviour
         captureQueue.Dequeue();
         if (captureQueue.Count > 0)
         {
-            captureQueue.Peek().EnableBeam();
+            ActivateNextPoint(captureQueue.Peek());
         }
 
         Acoes.OnPointCotrolledWithReward?.Invoke();
@@ -226,7 +226,13 @@ public class GameManager : MonoBehaviour
         captureQueue.Enqueue(point);
         if(captureQueue.Count == 1)
         {
-            captureQueue.Peek().EnableBeam();
+            ActivateNextPoint(captureQueue.Peek());
         }
+    }
+
+    void ActivateNextPoint(ControlPoint point)
+    {
+        point.EnableBeam();
+        Acoes.OnPointActivated?.Invoke(point);
     }
 }

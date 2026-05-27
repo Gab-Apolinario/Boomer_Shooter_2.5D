@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Threading;
 using UnityEngine;
 
 public class ControlPoint : MonoBehaviour
@@ -12,10 +11,13 @@ public class ControlPoint : MonoBehaviour
         Controlled
     }
 
+    [SerializeField] private ParticleSystem controlPointParticles;
     [SerializeField] private GameManager GameManager;
     [SerializeField] private ControlPointState currentState;
-    [SerializeField] private float timeToControl = 3f;
     [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private Sprite runeSprite;
+    public Sprite RuneSprite => runeSprite;
+    [SerializeField] private float timeToControl = 3f;
     [SerializeField] private float controlTimer;
     [SerializeField] private float resetTimerMax = 90f;
     [SerializeField] private float resetTimer;
@@ -31,6 +33,7 @@ public class ControlPoint : MonoBehaviour
     private LineRenderer lineRenderer;
     [SerializeField] private float beamWidth = 3f;
     [SerializeField] private Transform beamOrigin;
+    [SerializeField] private Material beamMaterial;
 
     #endregion
 
@@ -38,6 +41,8 @@ public class ControlPoint : MonoBehaviour
     {
         SetUpBeam();
         lineRenderer.enabled = false;
+        GetComponent<ControlPointPointer>().enabled = false;
+        controlPointParticles.Stop();
     }
 
     void Start()
@@ -46,6 +51,7 @@ public class ControlPoint : MonoBehaviour
         {
             GameManager = FindAnyObjectByType<GameManager>();
         }
+        
         meshRenderer.material.color = Color.red;
         controlTimer = 0;
         resetTimer = resetTimerMax;
@@ -57,6 +63,7 @@ public class ControlPoint : MonoBehaviour
         if (isControlling)
         {
             controlTimer += Time.deltaTime;
+            Acoes.OnCaptureProgress?.Invoke(this, controlTimer / timeToControl);
             if (controlTimer >= timeToControl)
             {
                 currentState = ControlPointState.Controlled;
@@ -74,12 +81,15 @@ public class ControlPoint : MonoBehaviour
             controlTimer = 0;
             resetTimer = resetTimerMax;
             resetCoroutine = StartCoroutine(ResetControlPoint());
+            GetComponent<ControlPointPointer>().enabled = false;
+            controlPointParticles.Stop();
         }
 
         if (isControlled && lineRenderer.enabled)
         {
             float progress = resetTimer / resetTimerMax;
             Color beamColor = Color.Lerp(Color.red, Color.blue, progress);
+            Acoes.OnResetProgress?.Invoke(this, resetTimer / resetTimerMax);
 
             //piscar
             float threshold = resetTimerMax * 0.15f;
@@ -97,7 +107,7 @@ public class ControlPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && currentState != ControlPointState.Controlled)
+        if (other.CompareTag("Player") && currentState != ControlPointState.Controlled && isActive)
         {
             //Garante que não tenha duas coroutines rodando ao mesmo tempo
             if (coroutine != null)
@@ -126,6 +136,7 @@ public class ControlPoint : MonoBehaviour
         while (controlTimer > 0)
         {
             controlTimer -= Time.deltaTime;
+            Acoes.OnCaptureProgress?.Invoke(this, controlTimer / timeToControl);
             yield return null;
         }
 
@@ -153,6 +164,7 @@ public class ControlPoint : MonoBehaviour
         lineRenderer.enabled = false;
         isActive = false;
         Acoes.OnPointReset?.Invoke(this);
+        GetComponent<ControlPointPointer>().enabled = false;
         Debug.Log("PONTO RESETADO!");
     }
 
@@ -164,15 +176,14 @@ public class ControlPoint : MonoBehaviour
         lineRenderer.endWidth = beamWidth;
         lineRenderer.SetPosition(0, beamOrigin.position);
         lineRenderer.SetPosition(1, beamOrigin.position + Vector3.up * 1000f);
-
-        //Cria o material via código
-        lineRenderer.material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-        lineRenderer.material.SetFloat("_Surface", 0);
+        lineRenderer.material = beamMaterial;
     }
 
     public void EnableBeam()
     {
         isActive = true;
         lineRenderer.enabled = true;
+        controlPointParticles.Play();
+        GetComponent<ControlPointPointer>().enabled = true;
     }
 }

@@ -48,6 +48,11 @@ public class InputHandler
         get { return inputActions.Player.Shoot.ReadValue<float>() > 0.5f; }
     }
 
+    public bool JumpInput
+    {
+        get { return inputActions.Player.Jump.ReadValue<float>() > 0.5f; }
+    } 
+
     public bool IsDashing
     {
         get { return inputActions.Player.Dash.ReadValue<float>() > 0.5f; }

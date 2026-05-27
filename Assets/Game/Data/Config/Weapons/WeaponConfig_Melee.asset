@@ -19,5 +19,5 @@ MonoBehaviour:
   maxRange: 1.5
   heatPerShot: 0
   heatCapacity: 100
-  coolingRate: 0
+  coolingRate: 35
   overheatCooldownDelay: 0

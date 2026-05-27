@@ -95,12 +95,17 @@ public class WeaponSystem : MonoBehaviour
             }
         }
 
+        if (currentHeat > 0 && !isOverheated && coolingCoroutine == null)
+        {
+            coolingCoroutine = StartCoroutine(GunCooling());
+        }
+
         //Se atirou, começa cooldown
         if (!canShoot)
         {
             cooldownTimer -= Time.deltaTime;
 
-            if (cooldownTimer <= 0 && !isOverheated) //atingiu o tempo de cooldown e não está carregando
+            if (cooldownTimer <= 0 && (isUsingMelee || !isOverheated)) //atingiu o tempo de cooldown e não está carregando
             {
                 canShoot = true;
                 cooldownTimer = config.fireRate * fireRateMultiplier; //reseta o timer de cooldown, aplicando o multiplicador de taxa de fogo
@@ -195,29 +200,46 @@ public class WeaponSystem : MonoBehaviour
     IEnumerator GunCooling()
     {
         yield return new WaitForSeconds(config.overheatCooldownDelay);
+        
 
         while (currentHeat > 0)
         {
             currentHeat -= config.coolingRate * Time.deltaTime;
-            Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity); //fillAmount barra);
-            var emission = smokeEffect.emission;
-            emission.rateOverTime = (currentHeat / config.heatCapacity) * config.smokeEmissionRate;
+            
+            if (!isUsingMelee)
+            {
+                Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity);
+                
+                if (smokeEffect.isPlaying)
+                {
+                    var emission = smokeEffect.emission;
+                    emission.rateOverTime = (currentHeat / config.heatCapacity) * config.smokeEmissionRate;
+                }
+            }
+            
             yield return null;
         }
 
-        smokeEffect.Stop();
         currentHeat = 0;
         isOverheated = false;
         coolingCoroutine = null;
-        canShoot = true;
+
+        if (!isUsingMelee)
+        {
+            smokeEffect.Stop();
+            Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity);
+            canShoot = true;
+        }
     }
 
     void SwapToMelee()
     {
         isUsingMelee = !isUsingMelee;
+
         if (isUsingMelee)
         {
             Debug.Log("MODO MELEE");
+            smokeEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             config = weaponConfigs[weaponConfigs.Length - 1]; //melee = última do array
 
             if (rangedWeaponModel != null)
@@ -233,16 +255,37 @@ public class WeaponSystem : MonoBehaviour
             {
                 meleeSystem.ShowWeapon();
             }
+            
+            canShoot = true;
 
-            StopAllCoroutines();
-            isOverheated = false;
-            currentHeat = 0;
-            Acoes.OnHeatChanged?.Invoke(0, config.heatCapacity);
+            if (currentHeat > 0 && coolingCoroutine == null)
+            {
+                coolingCoroutine = StartCoroutine(GunCooling());
+            }
         }
         else
         {
             Debug.Log($"MODO RANGED: {weaponConfigs[currentWeaponIndex].weaponName}");
             config = weaponConfigs[currentWeaponIndex]; //volta para a arma de distância atual
+
+            if (isOverheated)
+            {
+                canShoot = false;
+                smokeEffect.Play();
+            }
+            else
+            {
+                canShoot = true;
+                cooldownTimer = config.fireRate * fireRateMultiplier;
+
+                if (currentHeat > 0)
+                {
+                    smokeEffect.Play();
+                    var emission = smokeEffect.emission;
+                    emission.rateOverTime = (currentHeat / config.heatCapacity) * config.smokeEmissionRate;
+                }
+            }
+
 
             if (rangedWeaponModel != null)
             {
@@ -258,8 +301,7 @@ public class WeaponSystem : MonoBehaviour
                 meleeSystem.HideWeapon();
             }
 
-            canShoot = true;
-            cooldownTimer = config.fireRate * fireRateMultiplier;
+            Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity);
         }
     }
 
@@ -283,12 +325,13 @@ public class WeaponSystem : MonoBehaviour
         config = weaponConfigs[currentWeaponIndex]; //Substitui SO atual pela nova configuração
         Debug.Log($"Arma trocada para: {config.weaponName}");
 
+        smokeEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         StopAllCoroutines();
         canShoot = true;
-        isOverheated = false;
         cooldownTimer = config.fireRate * fireRateMultiplier;
-        currentHeat = 0;
-        Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity); //reset fillAmount barra);
+        //isOverheated = false;
+        //currentHeat = 0;
+        Acoes.OnHeatChanged?.Invoke(currentHeat, config.heatCapacity);
     }
 
 }

@@ -14,7 +14,7 @@ public static class Acoes
     public static Action<int> OnWaveSpawn;
     public static Action<int> OnTimeBetweenWaves;
 
-    //ESTADOS DE JOGO
+    //ESTADOS DE JOGO   
     public static Action GameOver;
     public static Action Victory;
     public static Action TimeOver;
@@ -27,11 +27,18 @@ public static class Acoes
     public static Action<float, float> OnPlayerHealthChanged; //health, maxHealth
     public static Action OnHealthPickup; //pickup de vida
 
+    //CONTROL POINTS
+    public static Action<ControlPoint[]> OnControlPointsOrdered; // passa a ordem do shuffle
+    public static Action<ControlPoint> OnPointActivated;         // qual ponto ficou ativo
+    public static Action<ControlPoint, float> OnCaptureProgress; // 0-1 enchendo
+    public static Action<ControlPoint, float> OnResetProgress;   // ponto + 0-1 esvaziando
+
     //POWERUPS
     public static Action<PowerUpsSO> OnPowerUpSelected;
     public static Action OnPointCotrolled;
     public static Action OnPointCotrolledWithReward;
     public static Action<ControlPoint> OnPointReset;
+    public static Action<float, float> OnShieldChanged;
 
     //PARTICULAS
     public static Action PlayerAtirou; //MUZZLE FLASH
