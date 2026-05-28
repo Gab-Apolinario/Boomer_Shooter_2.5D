@@ -32,10 +32,26 @@ public class BaseEnemy : MonoBehaviour
     protected RaycastHit hitInfo;
     protected float currentSprintSpeed;
 
+    [Header("Animation")]
+    protected Animator animator;
+    private bool isDamaged;
+    private EnemyState previousState;
+    private bool isDead;
     #endregion
 
+    void OnEnable()
+    {
+        Acoes.OnAllEnemiesDead += DestroyEnemy;
+    }
+
+    void OnDisable()
+    {
+        Acoes.OnAllEnemiesDead -= DestroyEnemy;
+    }
+    
     public virtual void Start()
     {
+        animator = GetComponentInChildren<Animator>();
         currentHealth = enemyData.maxHealth;
         currentSprintSpeed = enemyData.sprintSpeed + Random.Range(-0.5f, 0.8f);
 
@@ -60,8 +76,8 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual void Update()
     {
+        if (isDead) return; //proteção para não executar nada se já estiver morto
         Move();
-
         DetectPlayer();
     }
 
@@ -99,10 +115,12 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual void TakeDamage(float amount)
     {
-        StartCoroutine(FlashRed());
+        if(isDead) return; //proteção para não executar nada se já estiver morto
 
+        isDamaged = true;
         playerDetected = true;
         currentState = EnemyState.Chasing;
+        animator.SetInteger("State", 4);
 
         currentHealth -= amount;
 
@@ -110,13 +128,6 @@ public class BaseEnemy : MonoBehaviour
         {
             Die();
         }
-    }
-
-    IEnumerator FlashRed()
-    {
-        meshRenderer.material.color = Color.red;
-        yield return new WaitForSeconds(0.2f);
-        meshRenderer.material.color = originalColor;
     }
 
     public virtual void DetectPlayer()
@@ -144,6 +155,11 @@ public class BaseEnemy : MonoBehaviour
         }
         else if (playerDetected)
         {
+            if (currentState == EnemyState.Attacking)
+            {
+                isUpdatingDestination = false; //para de atualizar o destino enquanto ataca
+            }
+
             currentState = EnemyState.Chasing;
             navAgent.updateRotation = true;
 
@@ -156,14 +172,54 @@ public class BaseEnemy : MonoBehaviour
         {
             currentState = EnemyState.Idle;
         }
+
+        if (currentState != previousState && !isDamaged)
+        {
+            previousState = currentState;
+            UpdateAnimationState(currentState);
+        }
+    }
+
+    protected virtual void UpdateAnimationState(EnemyState newState)
+    {
+        switch (newState)
+        {
+            case EnemyState.Idle:
+                    animator.SetInteger("State", 0);
+                    break;
+                case EnemyState.Chasing:
+                    animator.SetInteger("State", 1);
+                    break;
+                case EnemyState.Attacking:
+                    animator.SetInteger("State", 2);
+                    break;
+        }
     }
 
     public virtual void Die()
     {
-        Destroy(gameObject);
+        isDead = true;
+        isDamaged = false;
+        animator.SetInteger("State", 3); //Morte
+        GetComponent<Collider>().enabled = false;
+        navAgent.enabled = false;
         Acoes.OnEnemyDie?.Invoke(enemyData.score);
     }
 
+    public virtual void DestroyEnemy()
+    {
+        Destroy(gameObject);
+    }
+    public virtual void OnDamageEnd()
+    {
+        Debug.Log("OnDamageEnd chamado, isDead = " + isDead);
+        if(isDead) return; //proteção para não executar nada se já estiver morto
+        isDamaged = false;
+        currentState = EnemyState.Chasing;
+        previousState = EnemyState.Chasing;
+        animator.SetInteger("State", 1); //Correndo
+    }
+    
     protected virtual void ChasingFromStart()
     {
         playerDetected = true;

@@ -7937,7 +7937,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &947834704
 Transform:
   m_ObjectHideFlags: 0
@@ -7966,8 +7966,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
   waves:
-  - meleeCount: 6
-    rangedCount: 2
+  - meleeCount: 0
+    rangedCount: 1
   - meleeCount: 8
     rangedCount: 4
   - meleeCount: 12
@@ -7983,8 +7983,8 @@ MonoBehaviour:
   - meleeCount: 28
     rangedCount: 18
   UIManager: {fileID: 1196123027}
-  meleeEnemyPrefab: {fileID: 4064662653855952883, guid: 280744884b08cca4881b33818ec138c1, type: 3}
-  rangedEnemyPrefab: {fileID: 1648012368314418281, guid: 6f5f5a38716a09b40a2dda338f7d1010, type: 3}
+  meleeEnemyPrefab: {fileID: 4064662653855952883, guid: 36df25c456628544abfb386c64e7bbfb, type: 3}
+  rangedEnemyPrefab: {fileID: 1648012368314418281, guid: 93068673a641dd84488f2e0daf5008e7, type: 3}
   spawnPoints:
   - {fileID: 889570088}
   - {fileID: 928982175}
@@ -16159,7 +16159,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1210295136302274648, guid: acfe41b6b8a00d54bb0fd9b5c323c86d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.1
+      value: -2.7
       objectReference: {fileID: 0}
     - target: {fileID: 1210295136302274648, guid: acfe41b6b8a00d54bb0fd9b5c323c86d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -16167,7 +16167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1210295136302274648, guid: acfe41b6b8a00d54bb0fd9b5c323c86d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -56.1
+      value: -83.2
       objectReference: {fileID: 0}
     - target: {fileID: 1210295136302274648, guid: acfe41b6b8a00d54bb0fd9b5c323c86d, type: 3}
       propertyPath: m_LocalRotation.w

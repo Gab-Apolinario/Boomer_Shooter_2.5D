@@ -31,12 +31,12 @@ public class RangedEnemy : BaseEnemy
         }
         if (gunFront == null)
         {
-            gunFront = transform.Find("GunHolder/Gun_Front");
+            gunFront = transform.Find("SpriteHolder/GunFront");
         }
-        if( muzzleFlashInimigo == null)
-        {
-            muzzleFlashInimigo = transform.Find("GunHolder/Gun_Front/Muzzle_Flash_Inimigo").GetComponent<ParticleSystem>();
-        }
+        // if( muzzleFlashInimigo == null)
+        // {
+        //     muzzleFlashInimigo = transform.Find("GunHolder/Gun_Front/Muzzle_Flash_Inimigo").GetComponent<ParticleSystem>();
+        // }
 
         playerScript = player.GetComponent<Player>();
 
@@ -70,11 +70,18 @@ public class RangedEnemy : BaseEnemy
 
     void Shoot()
     {
-        Debug.Log("Ranged Enemy Shooting!");
+        animator.SetTrigger("Shoot");
+        canShoot = false;
+        cooldownTimer = rangedData.shotCooldown;
+        StartCoroutine(DelayedShot());
+    }
 
-        muzzleFlashInimigo.Play();
+    IEnumerator DelayedShot()
+    {
+        yield return new WaitForSeconds(0.2f); // meio segundo de delay antes do tiro sair, para sincronizar com a animação
+        
+        //muzzleFlashInimigo.Play();
         Vector3 shotSpread = new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
-
         Vector3 directionToPlayer = ((player.position - transform.position) + shotSpread).normalized;
         
         bool shotFired = Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hitInfo, rangedData.detectionRange, ~wallLayer);
@@ -91,11 +98,23 @@ public class RangedEnemy : BaseEnemy
             laserDestination = hitInfo.point;
             StartCoroutine(ShowLaser(laserDestination));
         }
-
-        canShoot = false;
-        cooldownTimer = rangedData.shotCooldown;
     }
 
+    protected override void UpdateAnimationState(EnemyState newState)
+    {
+        switch (newState)
+        {
+            case EnemyState.Idle:
+                animator.SetInteger("State", 0);
+                break;
+            case EnemyState.Chasing:
+                animator.SetInteger("State", 1);
+                break;
+            case EnemyState.Attacking:
+                animator.SetInteger("State", 1); //mantem andando no state attacking, pq o tiro é um trigger separado
+                break;
+        }
+    }
     IEnumerator ShowLaser(Vector3 laserDestination)
     {
 
