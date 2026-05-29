@@ -54,6 +54,6 @@ public class MeleeEnemy : BaseEnemy
     void Attack()
     {
         canAttack = false;
-        playerScript.TakeDamage(meleeData.damage);
+        playerScript.TakeDamage(meleeData.damage, transform);
     }
 }

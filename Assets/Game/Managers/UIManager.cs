@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Gradient heatGradient;
     [SerializeField] private GameObject shieldContainer;
     [SerializeField] private Image shieldFill;
+    [SerializeField] private GameObject DashContainer;
+    [SerializeField] private Image dashFill;
     
     [Header("Modais")]
     [SerializeField] private GameObject gameOverModal;
@@ -47,6 +49,7 @@ public class UIManager : MonoBehaviour
         Acoes.OnWaveSpawn += OnWaveSpawn;
         Acoes.OnTimeBetweenWaves += OnTimeBetweenWaves;
         Acoes.OnShieldChanged += UpdateShieldUI;
+        Acoes.OnDashCooldown += UpdateDash;
     }
 
     private void OnDisable()
@@ -61,6 +64,7 @@ public class UIManager : MonoBehaviour
         Acoes.OnWaveSpawn -= OnWaveSpawn;
         Acoes.OnTimeBetweenWaves -= OnTimeBetweenWaves;
         Acoes.OnShieldChanged -= UpdateShieldUI;
+        Acoes.OnDashCooldown -= UpdateDash;
     }
     #endregion
 
@@ -79,6 +83,7 @@ public class UIManager : MonoBehaviour
         heatBar.fillAmount = 0f;
         shieldFill.fillAmount = 0f;
         shieldContainer.SetActive(false);
+        dashFill.fillAmount = 1f;
     }
 
     public void UpdateTimer(float timeRemaining)
@@ -91,6 +96,13 @@ public class UIManager : MonoBehaviour
     public void UpdateWave(int waveIndex, int totalWaves)
     {
         waveText.text = string.Format("{0}/{1}", waveIndex + 1, totalWaves);
+    }
+
+    void UpdateDash(float current, float max)
+    {
+        //DashContainer.SetActive(current < max);
+        dashFill.fillAmount = current / max;
+        dashFill.color = new Color(dashFill.color.r, dashFill.color.g, dashFill.color.b, dashFill.fillAmount);
     }
 
     private void UpdateHealth(float health, float maxHealth)

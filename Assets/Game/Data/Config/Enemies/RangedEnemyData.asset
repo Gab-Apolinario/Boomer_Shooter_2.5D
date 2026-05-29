@@ -17,7 +17,7 @@ MonoBehaviour:
   damage: 7
   moveSpeed: 7
   sprintSpeed: 7.5
-  detectionRange: 15
+  detectionRange: 20
   attackRange: 15
   fieldOfView: 110
   score: 15

@@ -212,7 +212,6 @@ public class BaseEnemy : MonoBehaviour
     }
     public virtual void OnDamageEnd()
     {
-        Debug.Log("OnDamageEnd chamado, isDead = " + isDead);
         if(isDead) return; //proteção para não executar nada se já estiver morto
         isDamaged = false;
         currentState = EnemyState.Chasing;

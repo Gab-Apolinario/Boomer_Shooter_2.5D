@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -12,6 +13,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 10f;
     public float speedMultiplier = 1f; //multiplicador de velocidade para powerups
     private Vector3 horizontalDirection;
+    public bool IsMoving => horizontalDirection.magnitude > 0.1f; //propriedade para verificar se o jogador está se movendo
+    public bool IsGrounded => characterController.isGrounded; //propriedade para verificar se o jogador está no chão
 
     [Header("Jump")]
     [SerializeField] private float jumpForce;
@@ -117,10 +120,9 @@ public class PlayerController : MonoBehaviour
 
             isInvincible = true; //torna o jogador invencível durante o dash
             dashVelocity = horizontalDirection.normalized * dashSpeed; //calcula a velocidade do dash na direção que o jogador está pressionando
-            Acoes.OnDash?.Invoke(horizontalDirection.normalized); //AÇÃO DE DASH
             Invoke(nameof(ResetInvincibility), invencibilityDuration); //chama ResetInvincibility após a duração da invencibilidade
             canDash = false; //desativa o dash até o cooldown terminar
-            Invoke(nameof(ResetDash), dashCooldown); //chama ResetDash após o cooldown
+            StartCoroutine(DashCooldownfloat(dashCooldown)); //chama o cooldown do dash
         }
     }
 
@@ -129,10 +131,18 @@ public class PlayerController : MonoBehaviour
         isInvincible = false; //desativa a invencibilidade após o dash
     } 
 
-    void ResetDash()
+    IEnumerator DashCooldownfloat(float cooldown)
     {
+        float elapsed = 0f;
+        while(elapsed < cooldown)
+        {
+            elapsed += Time.deltaTime;
+            Acoes.OnDashCooldown?.Invoke(elapsed, cooldown); //atualiza o UI do dash
+            yield return null;
+        }
+
         canDash = true;
-        dashVelocity = Vector3.zero; //reseta a velocidade do dash
+        dashVelocity = Vector3.zero; //reseta a velocidade do dash após o cooldown
     }
 
     public float GetMovementDot()

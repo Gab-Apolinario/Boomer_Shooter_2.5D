@@ -19,8 +19,18 @@ public class Player : MonoBehaviour
     }
 
     //Função para receber dano
+
     public void TakeDamage(float amount)
     {
+        TakeDamage(amount, null);
+    }
+    public void TakeDamage(float amount, Transform attacker)
+    {
+        if (attacker != null)
+        {
+            DamageIndicatorUI.Instance.TakeDamageFrom(attacker.transform.position);
+        }
+
         if (playerController.isInvincible)
         {
             return;

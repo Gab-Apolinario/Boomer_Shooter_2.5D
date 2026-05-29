@@ -89,7 +89,7 @@ public class RangedEnemy : BaseEnemy
 
         if (shotFired && hitInfo.collider.CompareTag("Player"))
         {
-            playerScript.TakeDamage(rangedData.damage);
+            playerScript.TakeDamage(rangedData.damage, transform);
             laserDestination = hitInfo.point;
             StartCoroutine(ShowLaser(laserDestination));
         }
