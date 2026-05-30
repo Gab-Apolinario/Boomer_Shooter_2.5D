@@ -38,6 +38,7 @@ public class BuffManager : MonoBehaviour
             case PowerUpsSO.PowerUpType.Damage:
                 Debug.Log($"Damage ANTES: {weaponSystem.damageMultiplier}");
                 weaponSystem.damageMultiplier = buff.powerUpValue;
+                Acoes.OnBuffPowerUp?.Invoke();
                 Debug.Log($"Damage DEPOIS: {weaponSystem.damageMultiplier}");
                 StartCoroutine(BuffDuration(buff));
                 break;
@@ -49,12 +50,14 @@ public class BuffManager : MonoBehaviour
                 break;
             case PowerUpsSO.PowerUpType.Shield:
                 player.ActivateShield(buff.powerUpValue);
+                Acoes.OnShieldPowerUp?.Invoke();
                 Debug.Log($"SHIELD: {player.shieldHealth}");
                 break;
             case PowerUpsSO.PowerUpType.FireRate:
                 Debug.Log($"FireRate ANTES: {weaponSystem.fireRateMultiplier}");
                 weaponSystem.fireRateMultiplier = buff.powerUpValue;
                 Debug.Log($"FireRate DEPOIS: {weaponSystem.fireRateMultiplier}");
+                Acoes.OnFireRatePowerUp?.Invoke();
                 StartCoroutine(BuffDuration(buff));
                 break;
         }

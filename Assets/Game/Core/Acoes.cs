@@ -45,4 +45,7 @@ public static class Acoes
     public static Action<Vector3> OnImpact; //IMPACTO
     public static Action<float, float> OnDashCooldown; //DASH
     public static Action<Vector3> OnDash; //DASH
+    public static Action OnShieldPowerUp; //SHIELD POWER-UP
+    public static Action OnBuffPowerUp; //BUFF POWER-UP
+    public static Action OnFireRatePowerUp; //FIRE RATE POWER-UP
 }

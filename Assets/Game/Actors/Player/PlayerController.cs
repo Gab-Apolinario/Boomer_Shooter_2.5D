@@ -120,6 +120,7 @@ public class PlayerController : MonoBehaviour
 
             isInvincible = true; //torna o jogador invencível durante o dash
             dashVelocity = horizontalDirection.normalized * dashSpeed; //calcula a velocidade do dash na direção que o jogador está pressionando
+            Acoes.OnDash?.Invoke(horizontalDirection.normalized);
             Invoke(nameof(ResetInvincibility), invencibilityDuration); //chama ResetInvincibility após a duração da invencibilidade
             canDash = false; //desativa o dash até o cooldown terminar
             StartCoroutine(DashCooldownfloat(dashCooldown)); //chama o cooldown do dash
