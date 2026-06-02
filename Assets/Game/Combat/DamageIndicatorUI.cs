@@ -24,7 +24,10 @@ public class DamageIndicatorUI : MonoBehaviour
 
     void Start()
     {
-
+        flashNorth.gameObject.SetActive(true);
+        flashSouth.gameObject.SetActive(true);
+        flashEast.gameObject.SetActive(true);
+        flashWest.gameObject.SetActive(true);
         // Garante que todos começam invisíveis
         SetAlpha(flashNorth, 0);
         SetAlpha(flashSouth, 0);

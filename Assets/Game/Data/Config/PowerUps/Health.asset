@@ -17,4 +17,4 @@ MonoBehaviour:
   powerUpValue: 50
   duration: 0
   description: Cura o jogador em 50 de vida
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a3ef4b37bcf6b4e479b31e94cdda39c6, type: 3}

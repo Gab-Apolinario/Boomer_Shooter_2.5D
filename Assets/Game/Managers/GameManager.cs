@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
             SceneLoader.LoadMenu();
         }
 
-        if (currentState == GameState.Playing && (Keyboard.current.pKey.wasPressedThisFrame || (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame)))
+        if (currentState == GameState.Playing && (Keyboard.current.pKey.wasPressedThisFrame || (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame)) || currentState == GameState.Playing && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             isPaused = !isPaused;
             Time.timeScale = isPaused ? 0 : 1;
@@ -103,9 +103,10 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        // Ctrl + Esc — fecha o jogo
+        if (Keyboard.current.escapeKey.wasPressedThisFrame && Keyboard.current.ctrlKey.isPressed)
         {
-            Application.Quit();
+            SceneLoader.ExitGame();
         }
 
         if (currentState == GameState.Playing && timerStarted)
@@ -235,4 +236,5 @@ public class GameManager : MonoBehaviour
         point.EnableBeam();
         Acoes.OnPointActivated?.Invoke(point);
     }
+
 }

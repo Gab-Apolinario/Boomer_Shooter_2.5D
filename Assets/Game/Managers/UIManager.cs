@@ -11,6 +11,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI waveAnnouncementText;
+    private bool wasAnnouncementActive;
+    private Coroutine waveSpawnCoroutine;
     [SerializeField] private Image heatBar;
     [SerializeField] private Gradient heatGradient;
     [SerializeField] private GameObject shieldContainer;
@@ -133,7 +135,12 @@ public class UIManager : MonoBehaviour
     
     private void OnWaveSpawn(int waveIndex)
     {
-        StartCoroutine(WaveSpawn(waveIndex));
+        if (waveSpawnCoroutine != null)
+        {
+            StopCoroutine(waveSpawnCoroutine);
+        }
+
+        waveSpawnCoroutine = StartCoroutine(WaveSpawn(waveIndex));
     }
 
     IEnumerator WaveSpawn(int waveIndex)
@@ -142,12 +149,19 @@ public class UIManager : MonoBehaviour
         waveAnnouncementText.text = $"Wave {waveIndex} Spawnada!";
         yield return new WaitForSeconds(2.5f);
         waveAnnouncementText.gameObject.SetActive(false);
+        waveSpawnCoroutine = null;
     }
 
     private void OnTimeBetweenWaves(int timeRemaining)
     {
+        if (waveSpawnCoroutine != null)
+        {
+            StopCoroutine(waveSpawnCoroutine);
+            waveSpawnCoroutine = null;
+        }
+
         waveAnnouncementText.gameObject.SetActive(true);
-        waveAnnouncementText.text = $"Proxima wave em {timeRemaining}";
+        waveAnnouncementText.text = $"Próxima wave em {timeRemaining} segundos!";
     }
 
     private void DisableUI()
@@ -180,6 +194,16 @@ public class UIManager : MonoBehaviour
         pauseModal.SetActive(false);
     }
 
+    public void DisableText()
+    {
+        wasAnnouncementActive = waveAnnouncementText.gameObject.activeSelf;
+        waveAnnouncementText.gameObject.SetActive(false);
+    }
+
+    public void EnableText()
+    {
+        waveAnnouncementText.gameObject.SetActive(wasAnnouncementActive);
+    }   
     public void OnMouseSliderChanged(float value)
     {
         SettingsManager.SetMouseSensibility(value);

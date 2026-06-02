@@ -378,7 +378,7 @@ MonoBehaviour:
   runeSprite: {fileID: 0}
   timeToControl: 5
   controlTimer: 0
-  resetTimerMax: 45
+  resetTimerMax: 60
   resetTimer: 0
   isControlling: 0
   isControlled: 0

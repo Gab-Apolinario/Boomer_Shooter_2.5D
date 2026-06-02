@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpsSO
   powerUpName: Energia Extra!
   powerUpType: 2
-  powerUpValue: 1.8
+  powerUpValue: 1.5
   duration: 8
-  description: Aumenta a velocidade em 70% por 8 segundos.
+  description: Aumenta a velocidade em 50% por 8 segundos
   icon: {fileID: 0}

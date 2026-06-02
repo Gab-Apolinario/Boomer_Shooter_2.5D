@@ -20,12 +20,8 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene("MainMenu"); 
     }
 
-    private void Update()
+    public void ExitGame()
     {
-        //Se o jogador apertar ESC, fecha o jogo
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            Application.Quit();
-        }
+        Application.Quit();
     }
 }

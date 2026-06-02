@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PowerUpSelectionUI : MonoBehaviour
 {
+    [SerializeField] UIManager uiManager;
     [SerializeField] GameObject powerUpPanel;
     [SerializeField] Button[] powerUpButtons;
     [SerializeField] TextMeshProUGUI[] powerUpDescriptions;
@@ -23,6 +24,7 @@ public class PowerUpSelectionUI : MonoBehaviour
 
     void Start()
     {
+        uiManager = FindObjectOfType<UIManager>();
         powerUpPanel.SetActive(false);
     }
 
@@ -42,6 +44,7 @@ public class PowerUpSelectionUI : MonoBehaviour
             powerUpButtons[i].interactable = false;
         }
 
+        uiManager.DisableText();
         powerUpPanel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -52,6 +55,7 @@ public class PowerUpSelectionUI : MonoBehaviour
 
     public void OnPowerUpSelected(PowerUpsSO selectedPowerUp)
     {
+        uiManager.EnableText();
         Debug.Log($"UI: PowerUp selecionado = {selectedPowerUp.powerUpName}");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

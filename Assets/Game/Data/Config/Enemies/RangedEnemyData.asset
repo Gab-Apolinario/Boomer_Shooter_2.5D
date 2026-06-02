@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangedEnemyDataSO
   enemyName: Ranged_Default
   maxHealth: 20
-  damage: 7
+  damage: 5
   moveSpeed: 7
   sprintSpeed: 7.5
   detectionRange: 20
