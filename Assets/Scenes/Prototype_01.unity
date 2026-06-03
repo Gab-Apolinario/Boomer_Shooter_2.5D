@@ -8158,7 +8158,7 @@ MonoBehaviour:
   - meleeCount: 24
     rangedCount: 10
   UIManager: {fileID: 1196123027}
-  meleeEnemyPrefab: {fileID: 4064662653855952883, guid: 36df25c456628544abfb386c64e7bbfb, type: 3}
+  meleeEnemyPrefab: {fileID: 4064662653855952883, guid: 46fe20cd1d3f94241a9596abbb2c9880, type: 3}
   rangedEnemyPrefab: {fileID: 1648012368314418281, guid: 93068673a641dd84488f2e0daf5008e7, type: 3}
   spawnPoints:
   - {fileID: 889570088}
@@ -16083,8 +16083,8 @@ MonoBehaviour:
   - meleeCount: 25
     rangedCount: 15
   UIManager: {fileID: 1196123027}
-  meleeEnemyPrefab: {fileID: 4064662653855952883, guid: 280744884b08cca4881b33818ec138c1, type: 3}
-  rangedEnemyPrefab: {fileID: 1648012368314418281, guid: 6f5f5a38716a09b40a2dda338f7d1010, type: 3}
+  meleeEnemyPrefab: {fileID: 4064662653855952883, guid: 46fe20cd1d3f94241a9596abbb2c9880, type: 3}
+  rangedEnemyPrefab: {fileID: 1648012368314418281, guid: 93068673a641dd84488f2e0daf5008e7, type: 3}
   spawnPoints:
   - {fileID: 440089305}
   - {fileID: 1226538634}

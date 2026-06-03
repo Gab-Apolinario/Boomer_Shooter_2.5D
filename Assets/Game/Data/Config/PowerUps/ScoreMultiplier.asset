@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3fc847e00cf24e41b0274cb21834bba, type: 3}
   m_Name: ScoreMultiplier
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpsSO
-  powerUpName: 
+  powerUpName: JACKPOT
   powerUpType: 5
   powerUpValue: 2
   duration: 10

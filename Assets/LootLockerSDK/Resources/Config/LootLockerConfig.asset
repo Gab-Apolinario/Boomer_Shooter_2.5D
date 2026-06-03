@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 182cd195a28310e479cddf7ff82822f8, type: 3}
   m_Name: LootLockerConfig
   m_EditorClassIdentifier: lootlocker.lootlockersdk.runtime::LootLocker.LootLockerConfig
-  apiKey: 
-  adminToken: 
-  domainKey: 
+  apiKey: dev_f32a05e6adc24f2780cd43c7a3a1a20a
+  adminToken: 0c12791d077e78b624af95679b412ffacef1edc4
+  domainKey: jkipuplt
   game_version: 1.0.0.0
-  sdk_version: 
+  sdk_version: 8.0.0
   logLevel: 2
   prettifyJson: 1
   obfuscateLogs: 1
@@ -28,9 +28,9 @@ MonoBehaviour:
   enablePresenceAutoDisconnectOnFocusChange: 0
   enablePresenceInEditor: 1
   url: https://api.lootlocker.com/v1
-  adminUrl: https://api.lootlocker.com/admin
-  playerUrl: https://api.lootlocker.com/player
-  userUrl: https://api.lootlocker.com/game
-  webSocketBaseUrl: wss://api.lootlocker.com/game
-  baseUrl: https://api.lootlocker.com
+  adminUrl: https://jkipuplt.api.lootlocker.com/admin
+  playerUrl: https://jkipuplt.api.lootlocker.com/player
+  userUrl: https://jkipuplt.api.lootlocker.com/game
+  webSocketBaseUrl: wss://jkipuplt.api.lootlocker.com/game
+  baseUrl: https://jkipuplt.api.lootlocker.com
   clientSideRequestTimeOut: 180
