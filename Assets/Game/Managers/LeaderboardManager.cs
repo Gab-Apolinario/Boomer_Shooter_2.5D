@@ -1,11 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using LootLocker.Requests;
 
 public class LeaderboardManager : MonoBehaviour
 {
-    private const string Key = "leaderboard";
+    private const string LeaderboardKey = "ranking_pgs";
     private const int MaxEntries = 15;
 
     [Serializable]
@@ -15,9 +17,6 @@ public class LeaderboardManager : MonoBehaviour
         public int score;
         public float timePlayed;
     }
-
-    [Serializable]
-    private class EntryList { public List<Entry> entries; }
 
     [Header("Inputs")]
     [SerializeField] private TMP_InputField gameOverInput;
@@ -30,67 +29,118 @@ public class LeaderboardManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeOverRanking;
 
     private int pendingScore;
-    public void SetPendingScore(int score) => pendingScore = score;
-
     private float pendingTime;
-    public void SetPendingTime(float time) => pendingTime = time;
+    private bool sessionReady = false;
+    private Coroutine refreshCoroutine;
 
-    public void OpenGameOver()  => ShowLeaderboard(gameOverInput, gameOverRanking);
-    public void OpenVictory()   => ShowLeaderboard(victoryInput, victoryRanking);
-    public void OpenTimeOver()  => ShowLeaderboard(timeOverInput, timeOverRanking);
+    public void SetPendingScore(int score) => pendingScore = score;
+    public void SetPendingTime(float time)  => pendingTime  = time;
 
-    public void OnSubmitGameOver()  => SubmitScore(gameOverInput, gameOverRanking);
-    public void OnSubmitVictory()   => SubmitScore(victoryInput, victoryRanking);
-    public void OnSubmitTimeOver()  => SubmitScore(timeOverInput, timeOverRanking);
+    // ── Ciclo de vida ────────────────────────────────────────────────
+    private void Start()
+    {
+        LootLockerSDKManager.StartGuestSession(response =>
+        {
+            if (response.success)
+            {
+                sessionReady = true;
+                Debug.Log("[LL] Sessão iniciada.");
+            }
+            else
+            {
+                Debug.LogWarning("[LL] Falha ao iniciar sessão.");
+            }
+        });
+    }
 
+    // ── API pública (idêntica ao original) ───────────────────────────
+    public void OpenGameOver()  => ShowLeaderboard(gameOverInput,  gameOverRanking);
+    public void OpenVictory()   => ShowLeaderboard(victoryInput,   victoryRanking);
+    public void OpenTimeOver()  => ShowLeaderboard(timeOverInput,  timeOverRanking);
+
+    public void OnSubmitGameOver()  => SubmitScore(gameOverInput,  gameOverRanking);
+    public void OnSubmitVictory()   => SubmitScore(victoryInput,   victoryRanking);
+    public void OnSubmitTimeOver()  => SubmitScore(timeOverInput,  timeOverRanking);
+
+    // ── Lógica interna ───────────────────────────────────────────────
     private void ShowLeaderboard(TMP_InputField input, TextMeshProUGUI rankingText)
     {
         input.text = "";
         input.interactable = true;
-        RefreshDisplay(rankingText);
+        FetchAndDisplay(rankingText);
+        StartAutoRefresh(rankingText);       // atualiza a cada 10s enquanto modal aberto
     }
 
     private void SubmitScore(TMP_InputField input, TextMeshProUGUI rankingText)
     {
-        string playerName = string.IsNullOrWhiteSpace(input.text) ? "???" : input.text;
-        SaveScore(playerName, pendingScore);
+        if (!sessionReady) { Debug.LogWarning("[LL] Sessão não pronta."); return; }
+
+        string playerName = string.IsNullOrWhiteSpace(input.text) ? "???" : input.text.Trim();
         input.interactable = false;
-        RefreshDisplay(rankingText);
-    }
 
-        private void RefreshDisplay(TextMeshProUGUI rankingText)
-    {
-        var entries = LoadAll();
-        string display = "";
-        for (int i = 0; i < entries.Count; i++)
+        rankingText.text = "Salvando Pontuação...";
+
+        // metadata salva o tempo (se você marcou Enable Metadata no dashboard)
+        string metadata = pendingTime.ToString("F1");
+
+        LootLockerSDKManager.SubmitScore(playerName, pendingScore, LeaderboardKey, metadata, response =>
         {
-            int minutes = Mathf.FloorToInt(entries[i].timePlayed / 60f);
-            int seconds = Mathf.FloorToInt(entries[i].timePlayed % 60f);
-            display += $"{i + 1}. {entries[i].name} — {entries[i].score} — {minutes:00}:{seconds:00}\n";
+            if (!response.success)
+            {
+                rankingText.text = "Falha ao salvar pontuação.";
+                input.interactable = true;
+                return;
+            }
+            
+            FetchAndDisplay(rankingText);
+        });
+    }
+
+    // Torna FetchAndDisplay pública para o MainMenuManager usar
+    public void FetchAndDisplay(TextMeshProUGUI rankingText)
+    {
+        if (!sessionReady) { rankingText.text = "Conectando..."; return; }
+
+        LootLockerSDKManager.GetScoreList(LeaderboardKey, MaxEntries, response =>
+        {
+            if (!response.success) { rankingText.text = "Erro ao carregar ranking."; return; }
+
+            string display = "";
+            foreach (var item in response.items)
+            {
+                string name = string.IsNullOrEmpty(item.member_id) ? "???" : item.member_id;
+                string timeStr = "--:--";
+                if (float.TryParse(item.metadata, out float t))
+                {
+                    int min = Mathf.FloorToInt(t / 60f);
+                    int sec = Mathf.FloorToInt(t % 60f);
+                    timeStr = $"{min:00}:{sec:00}";
+                }
+                display += $"{item.rank}. {name} — {item.score} — {timeStr}\n";
+            }
+            rankingText.text = display;
+        });
+    }
+
+    // ── Auto-refresh ─────────────────────────────────────────────────
+    // Chame StopAutoRefresh() ao fechar o modal se quiser parar o polling
+    public void StopAutoRefresh()
+    {
+        if (refreshCoroutine != null) StopCoroutine(refreshCoroutine);
+    }
+
+    private void StartAutoRefresh(TextMeshProUGUI rankingText)
+    {
+        StopAutoRefresh();
+        refreshCoroutine = StartCoroutine(AutoRefreshRoutine(rankingText));
+    }
+
+    private IEnumerator AutoRefreshRoutine(TextMeshProUGUI rankingText)
+    {
+        while (true)
+        {
+            yield return new WaitForSecondsRealtime(10f);
+            FetchAndDisplay(rankingText);
         }
-        rankingText.text = display;
-    }
-
-    private void SaveScore(string playerName, int score)
-    {
-        var list = LoadAll();
-        list.Add(new Entry { name = playerName, score = score, timePlayed = pendingTime });
-        list.Sort((a, b) => b.score.CompareTo(a.score));
-        if (list.Count > MaxEntries) list.RemoveRange(MaxEntries, list.Count - MaxEntries);
-        PlayerPrefs.SetString(Key, JsonUtility.ToJson(new EntryList { entries = list }));
-        PlayerPrefs.Save();
-    }
-
-    public List<Entry> LoadAll()
-    {
-        string json = PlayerPrefs.GetString(Key, "");
-        if (string.IsNullOrEmpty(json)) return new List<Entry>();
-        return JsonUtility.FromJson<EntryList>(json).entries;
-    }
-
-    public void ClearLeaderboard()
-    {
-        PlayerPrefs.DeleteKey(Key);
-        PlayerPrefs.Save();
     }
 }

@@ -15,8 +15,8 @@ MonoBehaviour:
   enemyName: Ranged_Default
   maxHealth: 20
   damage: 5
-  moveSpeed: 7
-  sprintSpeed: 7.5
+  moveSpeed: 7.2
+  sprintSpeed: 7.7
   detectionRange: 20
   attackRange: 15
   fieldOfView: 110

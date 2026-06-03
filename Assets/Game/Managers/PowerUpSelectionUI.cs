@@ -24,7 +24,7 @@ public class PowerUpSelectionUI : MonoBehaviour
 
     void Start()
     {
-        uiManager = FindObjectOfType<UIManager>();
+        uiManager = FindAnyObjectByType<UIManager>();
         powerUpPanel.SetActive(false);
     }
 

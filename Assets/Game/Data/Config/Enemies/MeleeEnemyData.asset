@@ -15,8 +15,8 @@ MonoBehaviour:
   enemyName: Melee_Default
   maxHealth: 30
   damage: 2
-  moveSpeed: 6.5
-  sprintSpeed: 7.5
+  moveSpeed: 6.7
+  sprintSpeed: 7.7
   detectionRange: 50
   attackRange: 1.5
   fieldOfView: 110

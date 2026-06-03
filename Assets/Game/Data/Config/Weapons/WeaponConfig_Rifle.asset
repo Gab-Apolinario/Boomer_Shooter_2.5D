@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: Rifle Neon
   smokeEmissionRate: 30
   damage: 40
-  fireRate: 1
+  fireRate: 0.85
   maxRange: 200
   heatPerShot: 15
   heatCapacity: 50

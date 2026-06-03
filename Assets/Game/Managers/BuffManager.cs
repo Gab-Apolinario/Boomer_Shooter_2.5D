@@ -7,6 +7,7 @@ public class BuffManager : MonoBehaviour
     Player player;
     PlayerController playerController;
     WeaponSystem weaponSystem;
+    GameManager gameManager;
 
     void OnEnable()
     {
@@ -22,6 +23,7 @@ public class BuffManager : MonoBehaviour
         player = GetComponent<Player>();
         playerController = GetComponent<PlayerController>();
         weaponSystem = GetComponentInChildren<WeaponSystem>();
+        gameManager = FindAnyObjectByType<GameManager>();
     }
 
     public void ApplyBuff(PowerUpsSO buff)
@@ -60,6 +62,12 @@ public class BuffManager : MonoBehaviour
                 Acoes.OnFireRatePowerUp?.Invoke();
                 StartCoroutine(BuffDuration(buff));
                 break;
+            case PowerUpsSO.PowerUpType.ScoreMultiplier:
+                Debug.Log($"ScoreMultiplier ANTES: {gameManager.scoreMultiplier}");
+                gameManager.scoreMultiplier = buff.powerUpValue;
+                Debug.Log($"ScoreMultiplier DEPOIS: {gameManager.scoreMultiplier}");
+                StartCoroutine(BuffDuration(buff));
+                break;
         }
     }
 
@@ -88,6 +96,9 @@ public class BuffManager : MonoBehaviour
                 break;
             case PowerUpsSO.PowerUpType.FireRate:
                 weaponSystem.fireRateMultiplier = 1f;
+                break;
+            case PowerUpsSO.PowerUpType.ScoreMultiplier:
+                gameManager.scoreMultiplier = 1f;
                 break;
         }
     }

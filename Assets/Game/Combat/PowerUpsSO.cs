@@ -9,7 +9,8 @@ public class PowerUpsSO : ScriptableObject
         Damage,
         Speed,
         Shield,
-        FireRate
+        FireRate,
+        ScoreMultiplier
     }
 
     [Header("ID do PowerUp")]

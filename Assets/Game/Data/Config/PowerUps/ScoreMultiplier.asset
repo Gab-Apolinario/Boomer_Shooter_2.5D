@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3fc847e00cf24e41b0274cb21834bba, type: 3}
-  m_Name: Damage
+  m_Name: ScoreMultiplier
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpsSO
-  powerUpName: BERSERK!
-  powerUpType: 1
-  powerUpValue: 1.5
-  duration: 8
-  description: Aumenta o dano em 50% durante 8 segundos
+  powerUpName: 
+  powerUpType: 5
+  powerUpValue: 2
+  duration: 10
+  description: Duplica a quantidade de pontos recebidos
   icon: {fileID: 0}

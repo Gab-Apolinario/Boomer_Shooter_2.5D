@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager UIManager;
     [SerializeField] private SceneLoader SceneLoader;
     [SerializeField] private int score;
+    public float scoreMultiplier = 1;
     private int scorePerSeconds;
     [SerializeField] private float timeLimit; //segundos
     [SerializeField] private float timePlayed; //segundos
@@ -129,7 +130,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        score += amount;
+        score += amount * (int)scoreMultiplier;
 
         Acoes.ResolveScore?.Invoke(score); //Atualizar UI
     }

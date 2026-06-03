@@ -29,15 +29,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void RefreshDisplay()
     {
-        var entries = leaderboardManager.LoadAll();
-        string display = "";
-        for (int i = 0; i < entries.Count; i++)
-        {
-            int minutes = Mathf.FloorToInt(entries[i].timePlayed / 60f);
-            int seconds = Mathf.FloorToInt(entries[i].timePlayed % 60f);
-            display += $"{i + 1}. {entries[i].name} — {entries[i].score} — {minutes:00}:{seconds:00}\n";
-        }
-        rankingText.text = display;
+        leaderboardManager.FetchAndDisplay(rankingText);
     }
 
     public void OpenControls()

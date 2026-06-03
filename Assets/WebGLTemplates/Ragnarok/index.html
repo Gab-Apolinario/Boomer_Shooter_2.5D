@@ -3,9 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{{ PRODUCT_NAME }}}</title>
+  <title>BOOMER_SHOOTER</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    @font-face {
+    font-family: 'Gunbai';
+    src: url('TemplateData/gunbai.ttf') format('truetype');
+    font-weight: normal;
+    }
 
     body {
       background: #0D0808;
@@ -39,9 +45,9 @@
 
     #unity-loading-title {
       color: #DCC8C8;
-      font-family: Impact, Arial Black, sans-serif;
-      font-size: 32px;
-      letter-spacing: 4px;
+      font-family: 'Gunbai', Impact, sans-serif;
+      font-size: 62px;
+      letter-spacing: 5px;
     }
 
     #unity-loading-red {
@@ -50,16 +56,16 @@
 
     #unity-loading-subtitle {
       color: #6B4040;
-      font-family: Arial, sans-serif;
-      font-size: 11px;
+      font-family: 'Gunbai', Arial, sans-serif;
+      font-size: 18px;
       letter-spacing: 4px;
     }
 
     #unity-progress-bar-empty {
-      width: 260px;
-      height: 3px;
+      width: 280px;
+      height: 4px;
       background: #2E1212;
-      border-radius: 2px;
+      border-radius: 3px;
       overflow: hidden;
     }
 
@@ -67,7 +73,7 @@
       width: 0%;
       height: 100%;
       background: #CC2200;
-      border-radius: 2px;
+      border-radius: 3px;
       transition: width 0.3s ease;
     }
 
@@ -79,7 +85,7 @@
       transform: translateX(-50%);
       color: #CC2200;
       font-family: Arial, sans-serif;
-      font-size: 12px;
+      font-size: 15px;
       text-align: center;
       white-space: nowrap;
       display: none;
@@ -164,16 +170,16 @@
 
     // ---- Unity loader ----
     var buildUrl  = "Build";
-    var loaderUrl = buildUrl + "/{{{ BUILD_NAME }}}.loader.js";
+    var loaderUrl = buildUrl + "/WebGL.loader.js";
 
     var config = {
-      dataUrl:             buildUrl + "/{{{ BUILD_NAME }}}.data",
-      frameworkUrl:        buildUrl + "/{{{ BUILD_NAME }}}.framework.js",
-      codeUrl:             buildUrl + "/{{{ BUILD_NAME }}}.wasm",
+      dataUrl:             buildUrl + "/WebGL.data",
+      frameworkUrl:        buildUrl + "/WebGL.framework.js",
+      codeUrl:             buildUrl + "/WebGL.wasm",
       streamingAssetsUrl:  "StreamingAssets",
-      companyName:         "{{{ COMPANY_NAME }}}",
-      productName:         "{{{ PRODUCT_NAME }}}",
-      productVersion:      "{{{ PRODUCT_VERSION }}}",
+      companyName:         "DefaultCompany",
+      productName:         "BOOMER_SHOOTER",
+      productVersion:      "0.1.0",
       showBanner: function (msg, type) {
         warningBanner.textContent   = msg;
         warningBanner.style.display = "block";

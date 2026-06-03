@@ -15,7 +15,7 @@ MonoBehaviour:
   weaponName: Pistola Neon
   smokeEmissionRate: 30
   damage: 10
-  fireRate: 0.25
+  fireRate: 0.35
   maxRange: 100
   heatPerShot: 5.5
   heatCapacity: 100

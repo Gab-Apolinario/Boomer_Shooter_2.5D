@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { background: #111; color: #fff; font-family: monospace; padding: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { color: #f80; text-align: left; padding: 4px 8px; }
+    td { padding: 4px 8px; border-bottom: 1px solid #333; }
+    tr:first-child td { color: #ff0; }
+  </style>
+</head>
+<body>
+  <table>
+    <thead><tr><th>#</th><th>PILOTO</th><th>PONTOS</th><th>TEMPO</th></tr></thead>
+    <tbody id="board"><tr><td colspan="4">Carregando...</td></tr></tbody>
+  </table>
+
+  <script>
+    const GAME_KEY      = "dev_f32a05e6adc24f2780cd43c7a3a1a20a";
+    const LEADERBOARD   = "ranking_pgs";
+    const API           = "https://api.lootlocker.io";
+
+    async function load() {
+      // 1. Inicia sessão guest
+      const session = await fetch(`${API}/game/v2/session/guest`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ game_key: GAME_KEY, game_version: "1.0.0" })
+      }).then(r => r.json());
+
+      if (!session.session_token) {
+        document.getElementById("board").innerHTML =
+          "<tr><td colspan='4'>Erro ao conectar.</td></tr>";
+        return;
+      }
+
+      // 2. Busca o ranking
+      const data = await fetch(
+        `${API}/game/leaderboards/${LEADERBOARD}/list?count=15`, {
+        headers: { "x-session-token": session.session_token }
+      }).then(r => r.json());
+
+      const items = data.items ?? [];
+      if (items.length === 0) {
+        document.getElementById("board").innerHTML =
+          "<tr><td colspan='4'>Nenhuma pontuação ainda.</td></tr>";
+        return;
+      }
+
+      document.getElementById("board").innerHTML = items.map(item => {
+        const name = item.member_id || "???";
+        let time = "--:--";
+        const t = parseFloat(item.metadata);
+        if (!isNaN(t)) {
+          const m = Math.floor(t / 60).toString().padStart(2, "0");
+          const s = Math.floor(t % 60).toString().padStart(2, "0");
+          time = `${m}:${s}`;
+        }
+        return `<tr>
+          <td>${item.rank}</td>
+          <td>${name}</td>
+          <td>${item.score}</td>
+          <td>${time}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    load();
+    setInterval(load, 30000); // atualiza a cada 30s
+  </script>
+</body>
+</html>

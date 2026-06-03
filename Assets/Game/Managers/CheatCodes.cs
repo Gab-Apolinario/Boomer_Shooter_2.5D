@@ -14,18 +14,6 @@ public class CheatCode : MonoBehaviour
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
-        // Ctrl + Shift + L — zera leaderboard
-        if (keyboard.leftCtrlKey.isPressed &&
-            keyboard.leftShiftKey.isPressed &&
-            keyboard.lKey.wasPressedThisFrame)
-        {
-            if (leaderboardManager != null)
-            {
-                leaderboardManager.ClearLeaderboard();
-                Debug.Log("Leaderboard zerado!");
-            }
-        }
-
         // Ctrl + Shift + W — próxima wave
         if (keyboard.leftCtrlKey.isPressed &&
             keyboard.leftShiftKey.isPressed &&
