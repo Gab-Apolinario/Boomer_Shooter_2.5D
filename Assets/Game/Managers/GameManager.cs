@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float timePlayed; //segundos
     [SerializeField] private bool timerStarted;
     [SerializeField] private bool isPaused;
+    private bool tutorialOpen = true;
 
     #endregion
 
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
         Acoes.OnWaveSpawn += StartTimer;
         Acoes.OnPointCotrolled += CheckVictory;
         Acoes.OnPointReset += HandlePointReset;
+        Acoes.OnHideTutorial += HandleHidTutorial;
     }
 
     private void OnDisable()
@@ -47,6 +49,7 @@ public class GameManager : MonoBehaviour
         Acoes.OnWaveSpawn -= StartTimer;
         Acoes.OnPointCotrolled -= CheckVictory;
         Acoes.OnPointReset -= HandlePointReset;
+        Acoes.OnHideTutorial -= HandleHidTutorial;
     }
     #endregion
 
@@ -66,6 +69,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 0;
+        Acoes.PlayMainMusic?.Invoke();
         currentState = GameState.Playing;
         score = 0;
         scorePerSeconds = 10;
@@ -89,7 +94,9 @@ public class GameManager : MonoBehaviour
             SceneLoader.LoadMenu();
         }
 
-        if (currentState == GameState.Playing && (Keyboard.current.pKey.wasPressedThisFrame || (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame)) || currentState == GameState.Playing && Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (currentState == GameState.Playing && (Keyboard.current.pKey.wasPressedThisFrame && !tutorialOpen
+            || (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame) && !tutorialOpen)
+            || currentState == GameState.Playing && Keyboard.current.escapeKey.wasPressedThisFrame && !tutorialOpen)
         {
             isPaused = !isPaused;
             Time.timeScale = isPaused ? 0 : 1;
@@ -123,6 +130,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    private void HandleHidTutorial()
+    {
+        Time.timeScale = 1;
+        tutorialOpen = false;
+    }
     public void IncreaseScore(int amount)
     {
         if (currentState != GameState.Playing)
@@ -137,6 +150,7 @@ public class GameManager : MonoBehaviour
 
     void HandleGameOver()
     {
+        Acoes.StopMainMusic?.Invoke();
         currentState = GameState.GameOver;
         Time.timeScale = 0;
 
@@ -147,6 +161,7 @@ public class GameManager : MonoBehaviour
 
     void HandleVictory()
     {
+        Acoes.StopMainMusic?.Invoke();
         currentState = GameState.Victory;
         Time.timeScale = 0;
         int timeBonus = (int)timeLimit * scorePerSeconds;
@@ -159,6 +174,7 @@ public class GameManager : MonoBehaviour
 
     void TimeOver()
     {
+        Acoes.StopMainMusic?.Invoke();
         currentState = GameState.TimeOver;
         Time.timeScale = 0;
 

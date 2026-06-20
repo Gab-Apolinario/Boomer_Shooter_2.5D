@@ -9,12 +9,14 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource shootSource;
     [SerializeField] private AudioSource overheatSource;
     [SerializeField] private AudioSource healthPickupSource;
+    [SerializeField] private AudioSource mainMusic;
 
     [Header("Clips")]
     [SerializeField] private AudioClip meleeClip;
     [SerializeField] private AudioClip shootClip;
     [SerializeField] private AudioClip overheatClip;
     [SerializeField] private AudioClip healthPickupClip;
+    [SerializeField] private AudioClip mainMusicClip;
 
     private void Awake()
     {
@@ -33,6 +35,8 @@ public class AudioManager : MonoBehaviour
         Acoes.PlayerAtirou += PlayShoot;
         Acoes.OnOverheat += PlayOverheat;
         Acoes.OnHealthPickup += PlayHealthPickup;
+        Acoes.PlayMainMusic += PlayMainMusic;
+        Acoes.StopMainMusic += StopMainMusic;
     }
 
     private void OnDisable()
@@ -41,6 +45,8 @@ public class AudioManager : MonoBehaviour
         Acoes.PlayerAtirou -= PlayShoot;
         Acoes.OnOverheat -= PlayOverheat;
         Acoes.OnHealthPickup -= PlayHealthPickup;
+        Acoes.PlayMainMusic -= PlayMainMusic;
+        Acoes.StopMainMusic -= StopMainMusic;
     }
 
     private void PlayMelee()
@@ -61,5 +67,15 @@ public class AudioManager : MonoBehaviour
     private void PlayHealthPickup()
     {
         healthPickupSource.PlayOneShot(healthPickupClip);
+    }
+
+    private void PlayMainMusic()
+    {
+        mainMusic.Play();
+    }
+
+    private void StopMainMusic()
+    {
+        mainMusic.Stop();
     }
 }

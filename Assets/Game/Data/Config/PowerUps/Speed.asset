@@ -17,4 +17,4 @@ MonoBehaviour:
   powerUpValue: 1.5
   duration: 8
   description: Aumenta a velocidade em 50% por 8 segundos
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d9670d5b11c9ce44298faba0a61b0a6c, type: 3}

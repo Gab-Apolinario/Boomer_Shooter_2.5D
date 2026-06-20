@@ -17,4 +17,4 @@ MonoBehaviour:
   powerUpValue: 1.5
   duration: 8
   description: Aumenta o dano em 50% durante 8 segundos
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a9030ea7f0c8c684880756fb76c3c896, type: 3}

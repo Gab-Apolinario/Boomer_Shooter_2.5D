@@ -17,4 +17,4 @@ MonoBehaviour:
   powerUpValue: 0.5
   duration: 8
   description: "Aumenta a cad\xEAncia da arma em 50% por 8 segundos"
-  icon: {fileID: 21300000, guid: c681a4cb5dffb99479716105921e82c7, type: 3}
+  icon: {fileID: 21300000, guid: 4ff66c6e35ef39146835d28e8e22c993, type: 3}

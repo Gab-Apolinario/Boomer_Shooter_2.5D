@@ -49,6 +49,8 @@ public class PowerUpSelectionUI : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Time.timeScale = 0f; //PAUSA O JOGO
+        Acoes.OnUIVisibilityChanged?.Invoke(false);
+
 
         StartCoroutine(EnableButtonsAfterDelay());
     }
@@ -63,6 +65,7 @@ public class PowerUpSelectionUI : MonoBehaviour
         Debug.Log("UI: Evento invocado");
         powerUpPanel.SetActive(false);
         Time.timeScale = 1f; //RETOMA O JOGO
+        Acoes.OnUIVisibilityChanged?.Invoke(true);
     }
 
     PowerUpsSO[] GetRandomPowerUps(int count)

@@ -18,6 +18,8 @@ public static class Acoes
     public static Action GameOver;
     public static Action Victory;
     public static Action TimeOver;
+    public static Action PlayMainMusic;
+    public static Action StopMainMusic;
 
     //UI
     public static Action<float> ResolveTime;
@@ -26,6 +28,8 @@ public static class Acoes
     public static Action OnOverheat; //arma superaquecida
     public static Action<float, float> OnPlayerHealthChanged; //health, maxHealth
     public static Action OnHealthPickup; //pickup de vida
+    public static Action OnHideTutorial;
+    public static Action<bool> OnUIVisibilityChanged;
 
     //CONTROL POINTS
     public static Action<ControlPoint[]> OnControlPointsOrdered; // passa a ordem do shuffle

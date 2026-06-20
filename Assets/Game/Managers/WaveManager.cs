@@ -49,7 +49,7 @@ public class WaveManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(StartWaveWithDelay(3f));
-        UIManager.UpdateWave(currentWaveIndex, waves.Count);
+        UIManager.UpdateWave(currentWaveIndex);
     }
 
     private void HandleEnemyDie(int _) //o int é o score do inimigo, usa '_' para indicar que não é usado
@@ -73,7 +73,7 @@ public class WaveManager : MonoBehaviour
             Acoes.OnAllEnemiesDead?.Invoke();
             currentWaveIndex++;
             StartCoroutine(StartWaveWithDelay(timeBetweenWaves));
-            UIManager.UpdateWave(currentWaveIndex, waves.Count);
+            UIManager.UpdateWave(currentWaveIndex);
         }
     }
 

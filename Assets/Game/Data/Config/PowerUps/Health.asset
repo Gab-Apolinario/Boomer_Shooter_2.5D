@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpsSO
   powerUpName: Hidromel
   powerUpType: 0
-  powerUpValue: 50
+  powerUpValue: 30
   duration: 0
-  description: Cura o jogador em 50 de vida
-  icon: {fileID: 21300000, guid: a3ef4b37bcf6b4e479b31e94cdda39c6, type: 3}
+  description: Cura o jogador em 30 de vida
+  icon: {fileID: 21300000, guid: 9e4d4c731a9610c4cb23eaff599959b7, type: 3}

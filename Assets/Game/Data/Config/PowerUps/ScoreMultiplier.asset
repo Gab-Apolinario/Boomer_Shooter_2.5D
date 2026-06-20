@@ -17,4 +17,4 @@ MonoBehaviour:
   powerUpValue: 2
   duration: 10
   description: Duplica a quantidade de pontos recebidos
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9abc401ce885a4846ace05bddbdb0535, type: 3}

@@ -11,6 +11,15 @@ public class ControlPointPointer : MonoBehaviour
     private Camera cam;
     private Image pointerImage;
 
+    private bool tutorialOpen = true;
+    private bool hiddenByUI;
+
+    private void Awake()
+    {
+        Acoes.OnHideTutorial += HandleTutorialClosed;
+        Acoes.OnUIVisibilityChanged += HandleUIVisibility;
+    }
+
     private void Start()
     {
         ControlPoint controlPoint = GetComponent<ControlPoint>();
@@ -20,30 +29,36 @@ public class ControlPointPointer : MonoBehaviour
         // instancia a imagem no Canvas
         Canvas canvas = FindAnyObjectByType<Canvas>();
         pointerImage = Instantiate(pointerImagePrefab, canvas.transform);
-        pointerImage.gameObject.SetActive(enabled);
+        pointerImage.gameObject.SetActive(ShouldBeVisible());
     }
 
     private void OnEnable()
     {
         if (pointerImage != null)
-            pointerImage.gameObject.SetActive(true);
+            pointerImage.gameObject.SetActive(ShouldBeVisible());
     }
 
     private void OnDisable()
     {
         if (pointerImage != null)
-            pointerImage.gameObject.SetActive(false);
+            pointerImage.gameObject.SetActive(ShouldBeVisible());
     }
 
     private void OnDestroy()
     {
+        
+        Acoes.OnHideTutorial -= HandleTutorialClosed;
+        Acoes.OnUIVisibilityChanged -= HandleUIVisibility;
+
         if (pointerImage != null)
+        {
             Destroy(pointerImage.gameObject);
+        }
     }
 
     private void Update()
     {
-        if (cam == null || pointerImage == null) return;
+        if (cam == null || pointerImage == null || !ShouldBeVisible()) return;
 
         Vector3 screenPos = cam.WorldToScreenPoint(transform.position);
         bool isBehind = screenPos.z < 0;
@@ -72,6 +87,26 @@ public class ControlPointPointer : MonoBehaviour
                 center.x + Mathf.Cos(angle) * radius,
                 center.y + Mathf.Sin(angle) * radius, 0f);
             pointerImage.rectTransform.rotation = Quaternion.Euler(0f, 0f, angle * Mathf.Rad2Deg);
+        }
+    }
+
+    private bool ShouldBeVisible() => enabled && !tutorialOpen && !hiddenByUI;
+
+    private void HandleTutorialClosed()
+    {
+        tutorialOpen = false;
+        if (pointerImage != null)
+        {
+            pointerImage.gameObject.SetActive(ShouldBeVisible());
+        }
+    }
+
+    private void HandleUIVisibility(bool visible)
+    {
+        hiddenByUI = !visible;
+        if ( pointerImage != null)
+        {
+            pointerImage.gameObject.SetActive(ShouldBeVisible());
         }
     }
 }
