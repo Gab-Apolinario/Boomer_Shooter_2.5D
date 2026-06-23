@@ -93,7 +93,7 @@
 
     .board-header {
       display: grid;
-      grid-template-columns: 48px 1fr 120px 90px;
+      grid-template-columns: 48px 1fr 100px 70px 90px;
       padding: 0.7rem 1rem;
       background: linear-gradient(90deg, #1a0800, #0a1a1a);
       border-bottom: 1px solid #00f0ff40;
@@ -110,7 +110,8 @@
     }
 
     .board-header span:last-child,
-    .board-header span:nth-child(3) {
+    .board-header span:nth-child(3),
+    .board-header span:nth-child(4) {
       text-align: right;
     }
 
@@ -120,7 +121,7 @@
 
     .row {
       display: grid;
-      grid-template-columns: 48px 1fr 120px 90px;
+      grid-template-columns: 48px 1fr 100px 70px 90px;
       padding: 0.75rem 1rem;
       border-bottom: 1px solid #ffffff08;
       transition: background 0.2s;
@@ -184,6 +185,12 @@
       font-size: 0.85rem;
       color: #00f0ff;
       text-shadow: 0 0 6px #00f0ff60;
+    }
+
+    .wave {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #ffffff60;
     }
 
     .time {
@@ -257,6 +264,7 @@
         <span>#</span>
         <span>Jogador</span>
         <span>Pontos</span>
+        <span>Onda</span>
         <span>Tempo</span>
       </div>
       <div class="board-body" id="board">
@@ -276,7 +284,7 @@
     const GAME_KEY    = "dev_f32a05e6adc24f2780cd43c7a3a1a20a";
     const LEADERBOARD = "ranking_pgs";
     const API         = "https://api.lootlocker.io";
-    const COUNT       = 15;
+    const COUNT       = 100;
 
     let sessionToken = null;
 
@@ -323,17 +331,26 @@
         const cls = medals[i] || "";
         const name = (item.member_id || "???").substring(0, 20);
         const score = item.score.toLocaleString("pt-BR");
+
+        const parts = (item.metadata || "").split(";");
         let time = "--:--";
-        const t = parseFloat(item.metadata);
+        let wave = "-";
+
+        const t = parseFloat(parts[0]);
         if (!isNaN(t)) {
           const m = String(Math.floor(t / 60)).padStart(2, "0");
           const s = String(Math.floor(t % 60)).padStart(2, "0");
           time = `${m}:${s}`;
         }
+        if (parts.length > 1 && parts[1] !== "") {
+          wave = parts[1];
+        }
+
         return `<div class="row ${cls}">
           <span class="rank">${item.rank}</span>
           <span class="name">${name}</span>
           <span class="score">${score}</span>
+          <span class="wave">${wave}</span>
           <span class="time">${time}</span>
         </div>`;
       }).join("");
